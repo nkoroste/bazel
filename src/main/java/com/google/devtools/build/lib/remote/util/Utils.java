@@ -38,6 +38,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
@@ -108,6 +109,28 @@ public class Utils {
               .setSpawn(FailureDetails.Spawn.newBuilder().setCode(Code.NON_ZERO_EXIT))
               .build());
     }
+    if (inMemoryOutput != null) {
+      builder.setInMemoryOutput(inMemoryOutput.getOutput(), inMemoryOutput.getContents());
+    }
+    return builder.build();
+  }
+
+  /** Constructs a {@link SpawnResult}. */
+  public static SpawnResult createSpawnResult(
+          int exitCode,
+          boolean cacheHit,
+          String runnerName,
+          @Nullable InMemoryOutput inMemoryOutput,
+          SpawnMetrics spawnMetrics,
+          long duration) {
+    SpawnResult.Builder builder =
+            new SpawnResult.Builder()
+                    .setStatus(exitCode == 0 ? Status.SUCCESS : Status.NON_ZERO_EXIT)
+                    .setExitCode(exitCode)
+                    .setRunnerName(cacheHit ? runnerName + " cache hit" : runnerName)
+                    .setCacheHit(cacheHit)
+                    .setSpawnMetrics(spawnMetrics)
+                    .setWallTime(Duration.ofNanos(duration));
     if (inMemoryOutput != null) {
       builder.setInMemoryOutput(inMemoryOutput.getOutput(), inMemoryOutput.getContents());
     }

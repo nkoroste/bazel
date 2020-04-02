@@ -160,8 +160,12 @@ final class RemoteSpawnCache implements SpawnCache {
       Context previous = withMetadata.attach();
       try {
         ActionResult result;
+        long downloadDuration = 0;
+
         try (SilentCloseable c = prof.profile(ProfilerTask.REMOTE_CACHE_CHECK, "check cache hit")) {
+          long now = System.nanoTime();
           result = remoteCache.downloadActionResult(actionKey, /* inlineOutErr= */ false);
+          downloadDuration += System.nanoTime() - now;
         }
         // In case the remote cache returned a failed action (exit code != 0) we treat it as a
         // cache miss
@@ -176,14 +180,17 @@ final class RemoteSpawnCache implements SpawnCache {
           if (downloadOutputs) {
             try (SilentCloseable c =
                 prof.profile(ProfilerTask.REMOTE_DOWNLOAD, "download outputs")) {
+              long now = System.nanoTime();
               remoteCache.download(
                   result, execRoot, context.getFileOutErr(), context::lockOutputFiles);
+              downloadDuration += System.nanoTime() - now;
             }
           } else {
             PathFragment inMemoryOutputPath = getInMemoryOutputPath(spawn);
             // inject output metadata
             try (SilentCloseable c =
                 prof.profile(ProfilerTask.REMOTE_DOWNLOAD, "download outputs minimal")) {
+              long now = System.nanoTime();
               inMemoryOutput =
                   remoteCache.downloadMinimal(
                       actionKey.getDigest().getHash(),
@@ -194,6 +201,7 @@ final class RemoteSpawnCache implements SpawnCache {
                       execRoot,
                       context.getMetadataInjector(),
                       context::lockOutputFiles);
+              downloadDuration += System.nanoTime() - now;
             }
           }
           fetchTime.stop();
@@ -208,7 +216,8 @@ final class RemoteSpawnCache implements SpawnCache {
                   /* cacheHit= */ true,
                   "remote",
                   inMemoryOutput,
-                  spawnMetrics.build());
+                  spawnMetrics.build(),
+                  downloadDuration);
           return SpawnCache.success(spawnResult);
         }
       } catch (CacheNotFoundException e) {

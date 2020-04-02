@@ -123,4 +123,6 @@ message SpawnExec {
   // Its semantics varies greatly depending on the status field.
   // Dependable: if status is empty, exit_code is guaranteed to be zero.
   int32 exit_code = 15;
+
+  uint64 wall_time = 16;
 }
