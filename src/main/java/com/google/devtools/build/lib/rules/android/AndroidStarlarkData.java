@@ -495,7 +495,8 @@ public abstract class AndroidStarlarkData
                   DataBinding.contextFrom(
                       dataBindingEnabled,
                       ctx.getActionConstructionContext(),
-                      ctx.getAndroidConfig()))
+                      ctx.getAndroidConfig()),
+                  ImmutableMap.of())
               .generateRClass(ctx);
 
       return AndroidBinaryDataInfo.of(

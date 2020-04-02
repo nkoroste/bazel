@@ -13,7 +13,9 @@
 // limitations under the License.
 package com.google.devtools.build.lib.rules.android;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.devtools.build.lib.actions.Artifact;
+import com.google.devtools.build.lib.analysis.actions.SpawnAction;
 import com.google.devtools.build.lib.rules.android.AndroidDataConverter.JoinerType;
 import com.google.devtools.build.lib.skyframe.serialization.autocodec.AutoCodec;
 import com.google.devtools.build.lib.skyframe.serialization.autocodec.AutoCodec.VisibleForSerialization;
@@ -30,6 +32,8 @@ public class RClassGeneratorActionBuilder {
   private ResourceDependencies dependencies;
 
   private Artifact classJarOut;
+
+  private ImmutableMap<String, String> executionInfo;
 
   private boolean finalFields = true;
 
@@ -48,6 +52,14 @@ public class RClassGeneratorActionBuilder {
     return this;
   }
 
+  /**
+   * Sets the map of execution info.
+   */
+  public RClassGeneratorActionBuilder setExecutionInfo(ImmutableMap<String, String> info) {
+    this.executionInfo = info;
+    return this;
+  }
+
   public ResourceApk build(AndroidDataContext dataContext, ProcessedAndroidData data) {
     build(dataContext, data.getRTxt(), data.getManifest());
 
@@ -62,6 +74,10 @@ public class RClassGeneratorActionBuilder {
             .addInput("--primaryManifest", manifest.getManifest())
             .maybeAddFlag("--packageForR", manifest.getPackage())
             .addFlag(finalFields ? "--finalFields" : "--nofinalFields");
+
+    if (executionInfo != null && !executionInfo.isEmpty()) {
+      builder.addExecutionInfo(executionInfo);
+    }
 
     if (dependencies != null && !dependencies.getResourceContainers().isEmpty()) {
       builder

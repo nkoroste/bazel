@@ -392,7 +392,8 @@ public class AndroidResourcesTest extends ResourceTestBase {
                 ResourceFilterFactory.empty(),
                 ImmutableList.of(),
                 false,
-                DataBinding.contextFrom(ruleContext, dataContext.getAndroidConfig()))
+                DataBinding.contextFrom(ruleContext, dataContext.getAndroidConfig()),
+                ImmutableMap.of())
             .generateRClass(dataContext);
 
     assertThat(resourceApk.getResourceProguardConfig()).isNotNull();
