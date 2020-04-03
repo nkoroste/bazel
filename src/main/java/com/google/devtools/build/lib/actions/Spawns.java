@@ -14,6 +14,7 @@
 
 package com.google.devtools.build.lib.actions;
 
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.devtools.build.lib.server.FailureDetails;
 import com.google.devtools.build.lib.server.FailureDetails.FailureDetail;
 import com.google.devtools.build.lib.server.FailureDetails.Spawn.Code;
@@ -22,6 +23,7 @@ import com.google.devtools.build.lib.util.CommandFailureUtils;
 import com.google.devtools.build.lib.vfs.Path;
 import java.time.Duration;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /** Helper methods relating to implementations of {@link Spawn}. */
@@ -29,18 +31,49 @@ public final class Spawns {
   private Spawns() {}
 
   /**
+   * This is a dirty hack by Anton. Sorry.
+   */
+  private static final LinkedHashMultimap<String, String> sCacheStrategyByMnemonicMap =
+      LinkedHashMultimap.create();
+
+  public static void resetCacheStategy() {
+    sCacheStrategyByMnemonicMap.clear();
+  }
+
+  /**
+   * Sets the cache strategy names for a given action mnemonic.
+   */
+  public static void addCacheStrategyByMnemonic(String mnemonic, List<String> strategies) {
+    sCacheStrategyByMnemonicMap.replaceValues(mnemonic, strategies);
+  }
+
+  /**
    * Returns {@code true} if the result of {@code spawn} may be cached.
    */
   public static boolean mayBeCached(Spawn spawn) {
-    return !spawn.getExecutionInfo().containsKey(ExecutionRequirements.NO_CACHE)
-        && !spawn.getExecutionInfo().containsKey(ExecutionRequirements.LOCAL);
+    if (!spawn.getExecutionInfo().containsKey(ExecutionRequirements.LOCAL)) {
+      if (sCacheStrategyByMnemonicMap.containsKey(spawn.getMnemonic())) {
+        return !sCacheStrategyByMnemonicMap.get(spawn.getMnemonic()).contains(ExecutionRequirements.NO_CACHE);
+      } else {
+        return !spawn.getExecutionInfo().containsKey(ExecutionRequirements.NO_CACHE);
+      }
+    } else {
+      return false;
+    }
   }
 
   /** Returns {@code true} if the result of {@code spawn} may be cached remotely. */
   public static boolean mayBeCachedRemotely(Spawn spawn) {
-    return mayBeCached(spawn)
-        && !spawn.getExecutionInfo().containsKey(ExecutionRequirements.NO_REMOTE)
-        && !spawn.getExecutionInfo().containsKey(ExecutionRequirements.NO_REMOTE_CACHE);
+    if (mayBeCached(spawn)
+        && !spawn.getExecutionInfo().containsKey(ExecutionRequirements.NO_REMOTE)) {
+      if (sCacheStrategyByMnemonicMap.containsKey(spawn.getMnemonic())) {
+        return !sCacheStrategyByMnemonicMap.get(spawn.getMnemonic()).contains(ExecutionRequirements.NO_REMOTE_CACHE);
+      } else {
+        return !spawn.getExecutionInfo().containsKey(ExecutionRequirements.NO_REMOTE_CACHE);
+      }
+    } else {
+      return false;
+    }
   }
 
   /** Returns {@code true} if {@code spawn} may be executed remotely. */

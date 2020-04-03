@@ -15,6 +15,7 @@
 package com.google.devtools.build.lib.bazel.rules;
 
 import com.google.common.collect.ImmutableList;
+import com.google.devtools.build.lib.actions.Spawns;
 import com.google.devtools.build.lib.analysis.actions.FileWriteActionContext;
 import com.google.devtools.build.lib.analysis.actions.TemplateExpansionContext;
 import com.google.devtools.build.lib.buildtool.BuildRequest;
@@ -63,6 +64,11 @@ public class BazelStrategyModule extends BlazeModule {
       SpawnStrategyRegistry.Builder registryBuilder, CommandEnvironment env) {
     ExecutionOptions options = env.getOptions().getOptions(ExecutionOptions.class);
     RemoteOptions remoteOptions = env.getOptions().getOptions(RemoteOptions.class);
+
+    Spawns.resetCacheStategy();
+    for (Map.Entry<String, List<String>> strategy : options.cacheStrategy) {
+      Spawns.addCacheStrategyByMnemonic(strategy.getKey(), strategy.getValue());
+    }
 
     List<String> spawnStrategies = new ArrayList<>(options.spawnStrategy);
 

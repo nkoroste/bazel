@@ -62,6 +62,17 @@ public class ExecutionOptions extends OptionsBase {
   public static final ExecutionOptions DEFAULTS = Options.getDefaults(ExecutionOptions.class);
 
   @Option(
+      name = "cache_strategy",
+      allowMultiple = true,
+      converter = Converters.StringToStringListConverter.class,
+      defaultValue = "null",
+      documentationCategory = OptionDocumentationCategory.UNCATEGORIZED,
+      effectTags = {OptionEffectTag.UNKNOWN},
+      help =
+          "Specify the cache policy for specific actions by mnemonic")
+  public List<Map.Entry<String, List<String>>> cacheStrategy;
+
+  @Option(
       name = "spawn_strategy",
       defaultValue = "",
       converter = CommaSeparatedNonEmptyOptionListConverter.class,
