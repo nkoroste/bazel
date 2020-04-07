@@ -33,8 +33,6 @@ public class RClassGeneratorActionBuilder {
 
   private Artifact classJarOut;
 
-  private ImmutableMap<String, String> executionInfo;
-
   private boolean finalFields = true;
 
   public RClassGeneratorActionBuilder withDependencies(ResourceDependencies resourceDeps) {
@@ -52,14 +50,6 @@ public class RClassGeneratorActionBuilder {
     return this;
   }
 
-  /**
-   * Sets the map of execution info.
-   */
-  public RClassGeneratorActionBuilder setExecutionInfo(ImmutableMap<String, String> info) {
-    this.executionInfo = info;
-    return this;
-  }
-
   public ResourceApk build(AndroidDataContext dataContext, ProcessedAndroidData data) {
     build(dataContext, data.getRTxt(), data.getManifest());
 
@@ -74,10 +64,6 @@ public class RClassGeneratorActionBuilder {
             .addInput("--primaryManifest", manifest.getManifest())
             .maybeAddFlag("--packageForR", manifest.getPackage())
             .addFlag(finalFields ? "--finalFields" : "--nofinalFields");
-
-    if (executionInfo != null && !executionInfo.isEmpty()) {
-      builder.addExecutionInfo(executionInfo);
-    }
 
     if (dependencies != null && !dependencies.getResourceContainers().isEmpty()) {
       builder

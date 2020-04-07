@@ -59,7 +59,6 @@ public final class BusyBoxActionBuilder {
   private final ImmutableList.Builder<Artifact> outputs = ImmutableList.builder();
   private final SpawnAction.Builder spawnActionBuilder = new SpawnAction.Builder();
   private final CustomCommandLine.Builder commandLine = CustomCommandLine.builder();
-  private final ImmutableMap.Builder<String, String> executionInfo = ImmutableMap.builder();
 
   public static BusyBoxActionBuilder create(
       AndroidDataContext dataContext, @CompileTimeConstant String toolName) {
@@ -326,14 +325,6 @@ public final class BusyBoxActionBuilder {
   }
 
   /**
-   * Sets the map of execution info.
-   */
-  public BusyBoxActionBuilder addExecutionInfo(Map<String, String> info) {
-    executionInfo.putAll(info);
-    return this;
-  }
-
-  /**
    * Builds and registers this action.
    *
    * @param message a progress message (visible in Bazel output), for example "Running tool". The
@@ -348,6 +339,9 @@ public final class BusyBoxActionBuilder {
         .setExecutable(dataContext.getBusybox())
         .setProgressMessage("%s for %s", message, dataContext.getLabel())
         .setMnemonic(mnemonic);
+
+    ImmutableMap.Builder<String, String> executionInfo = ImmutableMap.builder();
+    executionInfo.putAll(dataContext.getExecutionInfo());
 
     if (dataContext.isPersistentBusyboxToolsEnabled()) {
       commandLine.add("--logWarnings=false");

@@ -258,9 +258,7 @@ public abstract class AndroidBinary implements RuleConfiguredTargetFactory {
             ResourceFilterFactory.fromRuleContextAndAttrs(ruleContext),
             ruleContext.getExpander().withDataLocations().tokenized("nocompress_extensions"),
             ruleContext.attributes().get("crunch_png", Type.BOOLEAN),
-            DataBinding.contextFrom(ruleContext, dataContext.getAndroidConfig()),
-            TargetUtils.getExecutionInfo(
-                ruleContext.getRule(), ruleContext.isAllowTagsPropagation()));
+            DataBinding.contextFrom(ruleContext, dataContext.getAndroidConfig()));
 
     AndroidApplicationResourceInfo androidApplicationResourceInfo =
         ruleContext.getPrerequisite(
@@ -274,8 +272,6 @@ public abstract class AndroidBinary implements RuleConfiguredTargetFactory {
           new RClassGeneratorActionBuilder()
               .withDependencies(resourceDeps)
               .finalFields(!shrinkResourceCycles)
-              .setExecutionInfo(TargetUtils.getExecutionInfo(
-                  ruleContext.getRule(), ruleContext.isAllowTagsPropagation()))
               .setClassJarOut(
                   dataContext.createOutputArtifact(AndroidRuleClasses.ANDROID_RESOURCES_CLASS_JAR))
               .build(dataContext, processedAndroidData);

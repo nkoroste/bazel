@@ -64,8 +64,6 @@ public class AndroidResourcesProcessorBuilder {
   private String packageUnderTest;
   private boolean isTestWithResources = false;
 
-  private ImmutableMap<String, String> executionInfo;
-
   /**
    * The output zip for resource-processed data binding expressions (i.e. a zip of .xml files).
    *
@@ -163,14 +161,6 @@ public class AndroidResourcesProcessorBuilder {
   public AndroidResourcesProcessorBuilder setThrowOnResourceConflict(
       boolean throwOnResourceConflict) {
     this.throwOnResourceConflict = throwOnResourceConflict;
-    return this;
-  }
-
-  /**
-   * Sets the map of execution info.
-   */
-  public AndroidResourcesProcessorBuilder setExecutionInfo(ImmutableMap<String, String> info) {
-    this.executionInfo = info;
     return this;
   }
 
@@ -288,10 +278,6 @@ public class AndroidResourcesProcessorBuilder {
       StampedAndroidManifest primaryManifest) {
     BusyBoxActionBuilder builder =
         BusyBoxActionBuilder.create(dataContext, "AAPT2_PACKAGE").addAapt();
-
-    if (executionInfo != null && !executionInfo.isEmpty()) {
-      builder.addExecutionInfo(executionInfo);
-    }
 
     if (resourceDependencies != null) {
       builder

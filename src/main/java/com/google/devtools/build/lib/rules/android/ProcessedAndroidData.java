@@ -66,8 +66,7 @@ public class ProcessedAndroidData {
       ResourceFilterFactory resourceFilterFactory,
       List<String> noCompressExtensions,
       boolean crunchPng,
-      DataBindingContext dataBindingContext,
-      Map<String, String> executionInfo)
+      DataBindingContext dataBindingContext)
       throws RuleErrorException, InterruptedException {
     AndroidResourcesProcessorBuilder builder =
         builderForNonIncrementalTopLevelTarget(dataContext, manifest, manifestValues)
@@ -78,8 +77,7 @@ public class ProcessedAndroidData {
             .setMainDexProguardOut(
                 AndroidBinary.createMainDexProguardSpec(
                     dataContext.getLabel(), dataContext.getActionConstructionContext()))
-            .conditionalKeepRules(conditionalKeepRules)
-            .setExecutionInfo(ImmutableMap.copyOf(executionInfo));
+            .conditionalKeepRules(conditionalKeepRules);
     dataBindingContext.supplyLayoutInfo(builder::setDataBindingInfoZip);
     return buildActionForBinary(
         dataContext,
