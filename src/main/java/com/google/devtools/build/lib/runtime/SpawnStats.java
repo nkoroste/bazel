@@ -71,10 +71,13 @@ public class SpawnStats {
     }
 
     int total = result.spawnsCount();
-    return total + " process" + (total == 1 ? "" : "es") + result + ".";
+    String hitRate = String.format("%.2f", total == 0 ? 0 : (((double) result.getHit() / (double) total) * 100.00));
+    return total + " process" + (total == 1 ? "" : "es") + result + " (" + hitRate + "%).";
   }
 
   private static class ResultString {
+    String HIT = "remote cache hit";
+    int hit = 0;
     StringBuilder result = new StringBuilder();
     int spawnsCount = 0;
     int runnersNum = 0;
@@ -93,6 +96,10 @@ public class SpawnStats {
       result.append(count);
       result.append(" ");
       result.append(name);
+
+      if (name.equals(HIT)) {
+        hit = count;
+      }
     }
 
     @Override
@@ -101,6 +108,10 @@ public class SpawnStats {
         return "";
       }
       return ": " + result;
+    }
+
+    public int getHit() {
+      return hit;
     }
   }
 }

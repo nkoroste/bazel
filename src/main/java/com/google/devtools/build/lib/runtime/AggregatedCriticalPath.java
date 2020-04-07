@@ -76,6 +76,7 @@ public class AggregatedCriticalPath {
     StringBuilder sb = new StringBuilder("Critical Path: ");
     sb.append(String.format("%.2f", totalTime.toMillis() / 1000.0));
     sb.append("s");
+    sb.append(String.format(" (%.2fm)", totalTime.toMillis() / 1000.0/ 60));
     if (remote) {
       sb.append(", ");
       sb.append(getSpawnMetrics().toString(totalTime(), summary));

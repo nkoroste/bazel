@@ -114,7 +114,11 @@ public class BuildSummaryStatsModule extends BlazeModule {
     try {
       // We might want to make this conditional on a flag; it can sometimes be a bit of a nuisance.
       List<String> items = new ArrayList<>();
-      items.add(String.format("Elapsed time: %.3fs", event.getResult().getElapsedSeconds()));
+      items.add(String.format(
+              "Elapsed time: %.3fs (%.2fm)",
+              event.getResult().getElapsedSeconds(),
+              event.getResult().getElapsedSeconds()/60
+      ));
       event.getResult().getBuildToolLogCollection()
           .addDirectValue(
               "elapsed time",
