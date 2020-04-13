@@ -53,6 +53,16 @@ public class ParserOptions extends OptionsBase {
   public List<String> outputPath;
 
   @Option(
+          name = "restrict_to_message",
+          defaultValue = "null",
+          category = "logging",
+          documentationCategory = OptionDocumentationCategory.UNCATEGORIZED,
+          effectTags = {OptionEffectTag.UNKNOWN},
+          help =
+                  "If set, only output the executions that include the following string in the progress message")
+  public String restrictToMessage;
+
+  @Option(
       name = "restrict_to_runner",
       defaultValue = "null",
       category = "logging",

@@ -49,10 +49,12 @@ final class ExecLogParser {
   static class FilteringLogParser implements Parser {
     final InputStream in;
     final String restrictToRunner;
+    final String restrictToMessage;
 
-    FilteringLogParser(InputStream in, String restrictToRunner) {
+    FilteringLogParser(InputStream in, String restrictToRunner, String restrictToMessage) {
       this.in = in;
       this.restrictToRunner = restrictToRunner;
+      this.restrictToMessage = restrictToMessage;
     }
 
     @Override
@@ -65,7 +67,10 @@ final class ExecLogParser {
           return null;
         }
         ex = SpawnExec.parseDelimitedFrom(in);
-      } while (restrictToRunner != null && !restrictToRunner.equals(ex.getRunner()));
+      } while (
+              (restrictToRunner != null && !restrictToRunner.equals(ex.getRunner())) ||
+              (restrictToMessage != null && !ex.getProgressMessage().contains(restrictToMessage))
+      );
       return ex;
     }
   }
@@ -219,7 +224,7 @@ final class ExecLogParser {
     }
 
     try (InputStream input = new FileInputStream(logPath)) {
-      Parser parser = new FilteringLogParser(input, options.restrictToRunner);
+      Parser parser = new FilteringLogParser(input, options.restrictToRunner, options.restrictToMessage);
 
       if (output1 == null) {
         output(parser, System.out, golden);
@@ -233,7 +238,7 @@ final class ExecLogParser {
     if (secondPath != null) {
       try (InputStream file2 = new FileInputStream(secondPath);
           OutputStream output = new FileOutputStream(output2)) {
-        Parser parser = new FilteringLogParser(file2, options.restrictToRunner);
+        Parser parser = new FilteringLogParser(file2, options.restrictToRunner, options.restrictToMessage);
         // ReorderingParser will read the whole golden on initialization,
         // so it is safe to close after.
         parser = new ReorderingParser(golden, parser);
