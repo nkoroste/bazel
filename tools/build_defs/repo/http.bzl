@@ -80,7 +80,11 @@ def _get_auth(ctx, urls):
         return use_netrc(netrc, urls, ctx.attr.auth_patterns)
 
     if "HOME" in ctx.os.environ and not ctx.os.name.startswith("windows"):
-        netrcfile = "%s/.netrc" % (ctx.os.environ["HOME"])
+        netrcfile = "%s/.bazel_netrc" % (ctx.os.environ["HOME"])
+
+        if ctx.execute(["test", "-f", netrcfile]).return_code != 0:
+            netrcfile = "%s/.netrc" % (ctx.os.environ["HOME"])
+
         if ctx.execute(["test", "-f", netrcfile]).return_code == 0:
             netrc = read_netrc(ctx, netrcfile)
             return use_netrc(netrc, urls, ctx.attr.auth_patterns)

@@ -49,22 +49,12 @@ cp $android_tools_archive $versioned_android_tools_archive
 # Upload the tarball to GCS.
 # -n for no-clobber, so we don't overwrite existing files
 gsutil cp -n $versioned_android_tools_archive \
-  gs://bazel-mirror/bazel_android_tools/$VERSIONED_FILENAME
+  gs://snap-bazel-releases/bazel_android_tools/$VERSIONED_FILENAME
 
 checksum=$(sha256sum $versioned_android_tools_archive | cut -f 1 -d ' ')
-
-echo
-echo "Run this command to update Bazel to use the new version:"
-echo
-
-cat <<EOF
-sed -i 's/android_tools_pkg.*\.tar\.gz/$VERSIONED_FILENAME/g' WORKSPACE  && \\
-  sed -i 's/"[0-9a-fA-F]\{64\}", # DO_NOT_REMOVE_THIS_ANDROID_TOOLS_UPDATE_MARKER/"$checksum", # DO_NOT_REMOVE_THIS_ANDROID_TOOLS_UPDATE_MARKER/g' WORKSPACE && \\
-  sed -i 's/"android_tools_pkg.*[0-9a-FA-F]\{64\}",.*/"$VERSIONED_FILENAME": "$checksum",/g' WORKSPACE && \\
-  sed -i 's/android_tools_pkg.*\.tar\.gz/$VERSIONED_FILENAME/g' src/main/java/com/google/devtools/build/lib/bazel/rules/android/android_remote_tools.WORKSPACE && \\
-  sed -i 's/"[0-9a-fA-F]\{64\}",.*/"$checksum",/g' src/main/java/com/google/devtools/build/lib/bazel/rules/android/android_remote_tools.WORKSPACE
-EOF
-
-echo
-echo "Then, commit the changes and submit a pull request."
-echo
+cd $BAZEL_HOME
+sed -i "s/android_tools_pkg.*\.tar\.gz/$VERSIONED_FILENAME/g" WORKSPACE
+sed -i "s/\"[0-9a-fA-F]\{64\}\", # DO_NOT_REMOVE_THIS_ANDROID_TOOLS_UPDATE_MARKER/\"$checksum\", # ANDROID_TOOLS_UPDATE_MARKER_DO_NOT_REMOVE/g" WORKSPACE
+sed -i "s/\"android_tools_pkg.*[0-9a-FA-F]\{64\}\",.*/\"$VERSIONED_FILENAME\": \"$checksum\",/g" WORKSPACE
+sed -i "s/android_tools_pkg.*\.tar\.gz/$VERSIONED_FILENAME/g" src/main/java/com/google/devtools/build/lib/bazel/rules/android/android_remote_tools.WORKSPACE
+sed -i "s/\"[0-9a-fA-F]\{64\}\",.*/\"$checksum\",/g" src/main/java/com/google/devtools/build/lib/bazel/rules/android/android_remote_tools.WORKSPACE

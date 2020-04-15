@@ -1,3 +1,21 @@
+This is a fork of Bazel with Snapchat specific bug fixes and improvements. It's currently based on the following version:
+- Remote tag: [3.0.0](https://github.com/bazelbuild/bazel/tree/3.0.0)
+- Local branch: [upstream](https://github.sc-corp.net/Snapchat/bazel/tree/upstream)
+
+Making changes:
+- Put up a PR against the master branch.
+- Run [bazel-builder](https://snapengine-builder.sc-corp.net/jenkins/job/bazel-builder/) jenkins job against your branch to generate and deploy a bazel release to [GCS](https://console.cloud.google.com/storage/browser/snap-bazel-releases): 
+  - Once the build is finished, update the `.bazelversion file` in the Android repo with the number of your build. 
+  - Once your change is tested. Run `:cool:` on your PR in the bazel repo.
+  
+Making changes to Android tools:
+- Bump the version of the tools [here](https://github.sc-corp.net/Snapchat/bazel/blob/upstream/tools/android/runtime_deps/upload_android_tools.sh#L34)
+- Put up a PR against the master branch
+- Run [bazel-android-tools-builder](https://snapengine-builder.sc-corp.net/jenkins/job/bazel-android-tools-builder/) jenkins job against your branch to
+upload the compiled jar to [GCS](https://console.cloud.google.com/storage/browser/snap-bazel-releases).
+- Once the job is finished. It will push a commit back to branch.
+- Cool the PR and follow the instructions above to bump the Bazel version in the Android repo.
+
 # [Bazel](https://bazel.build)
 
 *{Fast, Correct} - Choose two*
