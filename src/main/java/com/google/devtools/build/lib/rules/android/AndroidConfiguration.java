@@ -852,6 +852,14 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
     public boolean useRTxtFromMergedResources;
 
     @Option(
+            name = "output_library_linked_resources",
+            defaultValue = "true",
+            documentationCategory = OptionDocumentationCategory.UNDOCUMENTED,
+            effectTags = {OptionEffectTag.UNKNOWN},
+            help = "If disabled, does not provide library.ap_ outputs for library targets")
+    public boolean outputLibraryLinkedResources;
+
+    @Option(
         name = "legacy_main_dex_list_generator",
         // TODO(b/147692286): Update this default value to R8's GenerateMainDexList binary after
         // migrating usage.
@@ -969,6 +977,7 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
   private final boolean alwaysFilterDuplicateClassesFromAndroidTest;
   private final boolean filterLibraryJarWithProgramJar;
   private final boolean useRTxtFromMergedResources;
+  private final boolean outputLibraryLinkedResources;
   private final Label legacyMainDexListGenerator;
   private final boolean disableInstrumentationManifestMerging;
 
@@ -1024,6 +1033,7 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
         options.alwaysFilterDuplicateClassesFromAndroidTest;
     this.filterLibraryJarWithProgramJar = options.filterLibraryJarWithProgramJar;
     this.useRTxtFromMergedResources = options.useRTxtFromMergedResources;
+    this.outputLibraryLinkedResources = options.outputLibraryLinkedResources;
     this.legacyMainDexListGenerator = options.legacyMainDexListGenerator;
     this.disableInstrumentationManifestMerging = options.disableInstrumentationManifestMerging;
 
@@ -1271,6 +1281,10 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
 
   boolean useRTxtFromMergedResources() {
     return useRTxtFromMergedResources;
+  }
+
+  boolean outputLibraryLinkedResources() {
+    return outputLibraryLinkedResources;
   }
 
   public boolean disableInstrumentationManifestMerging() {
