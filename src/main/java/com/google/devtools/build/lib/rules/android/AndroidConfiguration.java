@@ -852,6 +852,14 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
     public boolean useRTxtFromMergedResources;
 
     @Option(
+        name = "link_library_resources",
+        defaultValue = "true",
+        documentationCategory = OptionDocumentationCategory.UNDOCUMENTED,
+        effectTags = {OptionEffectTag.CHANGES_INPUTS},
+        help = "If disabled does not run aapt2 link for android_library targets")
+    public boolean linkLibraryResources;
+
+    @Option(
             name = "output_library_linked_resources",
             defaultValue = "true",
             documentationCategory = OptionDocumentationCategory.UNDOCUMENTED,
@@ -977,6 +985,8 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
   private final boolean alwaysFilterDuplicateClassesFromAndroidTest;
   private final boolean filterLibraryJarWithProgramJar;
   private final boolean useRTxtFromMergedResources;
+  private final boolean linkLibraryResources;
+
   private final boolean outputLibraryLinkedResources;
   private final Label legacyMainDexListGenerator;
   private final boolean disableInstrumentationManifestMerging;
@@ -1033,6 +1043,7 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
         options.alwaysFilterDuplicateClassesFromAndroidTest;
     this.filterLibraryJarWithProgramJar = options.filterLibraryJarWithProgramJar;
     this.useRTxtFromMergedResources = options.useRTxtFromMergedResources;
+    this.linkLibraryResources = options.linkLibraryResources;
     this.outputLibraryLinkedResources = options.outputLibraryLinkedResources;
     this.legacyMainDexListGenerator = options.legacyMainDexListGenerator;
     this.disableInstrumentationManifestMerging = options.disableInstrumentationManifestMerging;
@@ -1281,6 +1292,10 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
 
   boolean useRTxtFromMergedResources() {
     return useRTxtFromMergedResources;
+  }
+
+  boolean linkLibraryResources() {
+    return linkLibraryResources;
   }
 
   boolean outputLibraryLinkedResources() {
