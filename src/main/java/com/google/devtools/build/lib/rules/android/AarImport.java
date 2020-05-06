@@ -384,6 +384,7 @@ public class AarImport implements RuleConfiguredTargetFactory {
                 .addExecPath("--output", mergedJar)
                 .add("--dont_change_compression")
                 .add("--normalize")
+                .add("--deploy_manifest_lines", "Target-Label: " + ruleContext.getLabel())
                 .addPrefixedExecPath("@", paramFile)
                 .build())
         .build(ruleContext);
