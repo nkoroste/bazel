@@ -28,7 +28,6 @@ import com.google.devtools.build.lib.analysis.TransitionMode;
 import com.google.devtools.build.lib.packages.AttributeMap;
 import com.google.devtools.build.lib.packages.RuleClass.ConfiguredTargetFactory.RuleErrorException;
 import com.google.devtools.build.lib.packages.RuleErrorConsumer;
-import com.google.devtools.build.lib.rules.android.databinding.DataBinding;
 import com.google.devtools.build.lib.rules.android.databinding.DataBindingContext;
 import com.google.devtools.build.lib.vfs.PathFragment;
 import java.util.Arrays;
@@ -397,9 +396,11 @@ public class AndroidResources {
   public ParsedAndroidResources parse(
       AndroidDataContext dataContext,
       StampedAndroidManifest manifest,
-      DataBindingContext dataBindingContext)
+      DataBindingContext dataBindingContext,
+      boolean generateNamespacedRFiles)
       throws InterruptedException {
-    return ParsedAndroidResources.parseFrom(dataContext, this, manifest, dataBindingContext);
+    return ParsedAndroidResources.parseFrom(dataContext, this, manifest, dataBindingContext,
+        generateNamespacedRFiles);
   }
 
   /**
@@ -412,14 +413,16 @@ public class AndroidResources {
       StampedAndroidManifest manifest,
       DataBindingContext dataBindingContext,
       boolean neverlink,
-      boolean linkResources)
+      boolean linkResources,
+      boolean namespacedRClass)
       throws RuleErrorException, InterruptedException {
     return process(
         dataContext,
         manifest,
         ResourceDependencies.fromRuleDeps(ruleContext, neverlink),
         dataBindingContext,
-        linkResources);
+        linkResources,
+        namespacedRClass);
   }
 
   ValidatedAndroidResources process(
@@ -427,10 +430,16 @@ public class AndroidResources {
       StampedAndroidManifest manifest,
       ResourceDependencies resourceDeps,
       DataBindingContext dataBindingContext,
-      boolean linkResources)
+      boolean linkResources,
+      boolean namespacedRClass)
       throws InterruptedException {
-    MergedAndroidResources merge = parse(dataContext, manifest, dataBindingContext)
-        .merge(dataContext, resourceDeps);
+    ParsedAndroidResources parse =
+        parse(dataContext, manifest, dataBindingContext, namespacedRClass);
+
+    MergedAndroidResources merge = namespacedRClass ?
+        parse.noMerge(dataContext, resourceDeps) :
+        parse.merge(dataContext, resourceDeps);
+
     return linkResources ? merge.validate(dataContext) : merge.validateNoLink(dataContext);
   }
 

@@ -163,7 +163,8 @@ public abstract class AndroidLibrary implements RuleConfiguredTargetFactory {
                   manifest,
                   DataBinding.contextFrom(ruleContext, dataContext.getAndroidConfig()),
                   isNeverLink,
-                  androidConfig.linkLibraryResources());
+                  androidConfig.linkLibraryResources(),
+                  androidConfig.namespacedRClass());
 
       MergedAndroidAssets assets = AndroidAssets.from(ruleContext).process(dataContext, assetDeps);
 

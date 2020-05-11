@@ -860,6 +860,15 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
     public boolean linkLibraryResources;
 
     @Option(
+        name = "namespaced_r_class",
+        defaultValue = "false",
+        documentationCategory = OptionDocumentationCategory.UNDOCUMENTED,
+        effectTags = {OptionEffectTag.CHANGES_INPUTS},
+        help = "If enabled each library only contains references to the resources it declares"
+            + " instead of declarations plus all dependency references.")
+    public boolean namespacedRClass;
+
+    @Option(
             name = "output_library_linked_resources",
             defaultValue = "true",
             documentationCategory = OptionDocumentationCategory.UNDOCUMENTED,
@@ -995,6 +1004,7 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
   private final boolean useRTxtFromMergedResources;
   private final boolean outputLibraryMergedAssets;
   private final boolean linkLibraryResources;
+  private final boolean namespacedRClass;
   private final boolean outputLibraryLinkedResources;
   private final Label legacyMainDexListGenerator;
   private final boolean disableInstrumentationManifestMerging;
@@ -1052,6 +1062,7 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
     this.filterLibraryJarWithProgramJar = options.filterLibraryJarWithProgramJar;
     this.useRTxtFromMergedResources = options.useRTxtFromMergedResources;
     this.linkLibraryResources = options.linkLibraryResources;
+    this.namespacedRClass = options.namespacedRClass;
     this.outputLibraryLinkedResources = options.outputLibraryLinkedResources;
     this.outputLibraryMergedAssets = options.outputLibraryMergedAssets;
     this.legacyMainDexListGenerator = options.legacyMainDexListGenerator;
@@ -1305,6 +1316,10 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
 
   boolean linkLibraryResources() {
     return linkLibraryResources;
+  }
+
+  boolean namespacedRClass() {
+    return namespacedRClass;
   }
 
   boolean outputLibraryLinkedResources() {
