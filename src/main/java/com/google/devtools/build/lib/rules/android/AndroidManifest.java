@@ -62,7 +62,8 @@ public class AndroidManifest {
   public static AndroidManifest fromAttributes(
       RuleContext ruleContext, AndroidDataContext dataContext)
       throws InterruptedException, RuleErrorException {
-    return fromAttributes(ruleContext, dataContext, null);
+    return fromAttributes(ruleContext, dataContext, null,
+        true /* overrideManifestPackage */);
   }
 
   /**
@@ -77,7 +78,7 @@ public class AndroidManifest {
   public static AndroidManifest fromAttributes(
       RuleContext ruleContext,
       AndroidDataContext dataContext,
-      @Nullable AndroidSemantics androidSemantics)
+      @Nullable AndroidSemantics androidSemantics, boolean overrideManifestPackage)
       throws RuleErrorException, InterruptedException {
     Artifact rawManifest = null;
     if (AndroidResources.definesAndroidResources(ruleContext.attributes())) {
@@ -85,13 +86,21 @@ public class AndroidManifest {
       rawManifest = ruleContext.getPrerequisiteArtifact("manifest", TransitionMode.TARGET);
     }
 
-    return from(
-        dataContext,
-        ruleContext,
-        rawManifest,
-        androidSemantics,
-        getAndroidPackage(ruleContext),
-        AndroidCommon.getExportsManifest(ruleContext));
+    String androidPackage = overrideManifestPackage ? getAndroidPackage(ruleContext) : null;
+    boolean exportsManifest = AndroidCommon.getExportsManifest(ruleContext);
+
+    if (rawManifest == null) {
+      // Generate a dummy manifest
+      return StampedAndroidManifest.createEmpty(
+          dataContext.getActionConstructionContext(), androidPackage, exportsManifest);
+    }
+
+    AndroidManifest raw = new AndroidManifest(rawManifest, androidPackage, exportsManifest);
+
+    if (androidSemantics != null) {
+      return androidSemantics.renameManifest(dataContext, raw);
+    }
+    return raw.renameManifestIfNeeded(dataContext);
   }
 
   /**
