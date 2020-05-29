@@ -672,13 +672,13 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
     public boolean exportsManifestDefault;
 
     @Option(
-        name = "override_manifest_package",
+        name = "infer_manifest_package_from_java_package",
         defaultValue = "true",
         documentationCategory = OptionDocumentationCategory.UNDOCUMENTED,
         effectTags = {OptionEffectTag.CHANGES_INPUTS},
-        help = "If set will override the package set in the manifest with custom_package attribute "
-            + "if set otherwise will derive package from the path to the rule.")
-    public boolean overrideManifestPackage;
+        help = "If set will override the package set in the manifest with the Java package unless "
+            + "custom_package attribute is set")
+    public boolean inferManifestPackageFromJavaPackage;
 
     @Option(
         name = "experimental_omit_resources_info_provider_from_android_binary",
@@ -997,7 +997,7 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
   private final boolean useSingleJarApkBuilder;
   private final boolean compressJavaResources;
   private final boolean exportsManifestDefault;
-  private final boolean overrideManifestPackage;
+  private final boolean inferManifestPackageFromJavaPackage;
   private final boolean useParallelDex2Oat;
   private final boolean breakBuildOnParallelDex2OatFailure;
   private final boolean omitResourcesInfoProviderFromAndroidBinary;
@@ -1051,7 +1051,7 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
     this.useRexToCompressDexFiles = options.useRexToCompressDexFiles;
     this.compressJavaResources = options.compressJavaResources;
     this.exportsManifestDefault = options.exportsManifestDefault;
-    this.overrideManifestPackage = options.overrideManifestPackage;
+    this.inferManifestPackageFromJavaPackage = options.inferManifestPackageFromJavaPackage;
     this.useParallelDex2Oat = options.useParallelDex2Oat;
     this.breakBuildOnParallelDex2OatFailure = options.breakBuildOnParallelDex2OatFailure;
     this.omitResourcesInfoProviderFromAndroidBinary =
@@ -1265,8 +1265,8 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
     return exportsManifestDefault;
   }
 
-  public boolean getOverrideManifestPackage() {
-    return overrideManifestPackage;
+  public boolean inferManifestPackageFromJavaPackage() {
+    return inferManifestPackageFromJavaPackage;
   }
 
   @Override

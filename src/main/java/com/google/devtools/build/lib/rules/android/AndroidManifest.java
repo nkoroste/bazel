@@ -63,7 +63,7 @@ public class AndroidManifest {
       RuleContext ruleContext, AndroidDataContext dataContext)
       throws InterruptedException, RuleErrorException {
     return fromAttributes(ruleContext, dataContext, null,
-        true /* overrideManifestPackage */);
+        true /* inferManifestPackageFromJavaPackage */);
   }
 
   /**
@@ -78,7 +78,7 @@ public class AndroidManifest {
   public static AndroidManifest fromAttributes(
       RuleContext ruleContext,
       AndroidDataContext dataContext,
-      @Nullable AndroidSemantics androidSemantics, boolean overrideManifestPackage)
+      @Nullable AndroidSemantics androidSemantics, boolean inferManifestPackageFromJavaPackage)
       throws RuleErrorException, InterruptedException {
     Artifact rawManifest = null;
     if (AndroidResources.definesAndroidResources(ruleContext.attributes())) {
@@ -86,7 +86,7 @@ public class AndroidManifest {
       rawManifest = ruleContext.getPrerequisiteArtifact("manifest", TransitionMode.TARGET);
     }
 
-    String androidPackage = overrideManifestPackage ? getAndroidPackage(ruleContext) : null;
+    String androidPackage = getAndroidPackage(ruleContext, inferManifestPackageFromJavaPackage);
     boolean exportsManifest = AndroidCommon.getExportsManifest(ruleContext);
 
     if (rawManifest == null) {
@@ -323,12 +323,14 @@ public class AndroidManifest {
   }
 
   /** Gets the Android package for this target, from either rule configuration or Java package */
-  private static String getAndroidPackage(RuleContext ruleContext) {
+  private static String getAndroidPackage(RuleContext ruleContext, boolean overrideManifestPackage) {
     if (ruleContext.attributes().isAttributeValueExplicitlySpecified(CUSTOM_PACKAGE_ATTR)) {
       return ruleContext.attributes().get(CUSTOM_PACKAGE_ATTR, Type.STRING);
     }
 
-    return getDefaultPackage(ruleContext.getLabel(), ruleContext, ruleContext);
+    return overrideManifestPackage ?
+        getDefaultPackage(ruleContext.getLabel(), ruleContext, ruleContext) :
+        null;
   }
 
   /**

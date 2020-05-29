@@ -153,7 +153,7 @@ public abstract class AndroidLibrary implements RuleConfiguredTargetFactory {
     if (definesLocalResources) {
       StampedAndroidManifest manifest =
           AndroidManifest.fromAttributes(ruleContext, dataContext, androidSemantics,
-              androidConfig.getOverrideManifestPackage())
+              androidConfig.inferManifestPackageFromJavaPackage())
               .stamp(dataContext);
 
       ValidatedAndroidResources resources =
