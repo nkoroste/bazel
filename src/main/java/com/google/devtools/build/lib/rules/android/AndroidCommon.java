@@ -409,30 +409,6 @@ public class AndroidCommon {
     return ruleContext.getHostPrerequisiteArtifact("debug_key");
   }
 
-  private void addResourceClassJarToClassPath(
-      Artifact resourceJavaClassJar,
-      JavaCompilationArtifacts.Builder artifactsBuilder,
-      JavaTargetAttributes.Builder attributes,
-      NestedSetBuilder<Artifact> filesBuilder)
-      throws InterruptedException {
-
-    // The resource class JAR should already have been generated.
-    Preconditions.checkArgument(
-        resourceJavaClassJar.equals(
-            ruleContext.getImplicitOutputArtifact(AndroidRuleClasses.ANDROID_RESOURCES_CLASS_JAR)));
-
-    // Add the compiled resource jar to the classpath of the main compilation.
-    attributes.addDirectJars(NestedSetBuilder.create(Order.STABLE_ORDER, resourceJavaClassJar));
-    // Add the compiled resource jar to the classpath of consuming targets.
-    // We don't actually use the ijar. That is almost the same as the resource class jar
-    // except for <clinit>, but it takes time to build and waiting for that to build would
-    // just delay building the rest of the library.
-    artifactsBuilder.addCompileTimeJarAsFullJar(resourceJavaClassJar);
-
-    // Add the compiled resource jar as a declared output of the rule.
-    filesBuilder.add(resourceJavaClassJar);
-  }
-
   private void packResourceSourceJar(JavaSemantics javaSemantics, Artifact resourcesJavaSrcJar)
       throws InterruptedException {
 
@@ -449,6 +425,7 @@ public class AndroidCommon {
   public JavaTargetAttributes init(
       JavaSemantics javaSemantics,
       AndroidSemantics androidSemantics,
+      AndroidDataContext dataContext,
       ResourceApk resourceApk,
       boolean addCoverageSupport,
       boolean collectJavaCompilationArgs,
@@ -518,14 +495,40 @@ public class AndroidCommon {
       }
 
       if (resourceApk.getResourceJavaClassJar() != null) {
-        addResourceClassJarToClassPath(resourceApk.getResourceJavaClassJar(),
-            artifactsBuilder, attributesBuilder, filesBuilder);
+        Artifact resourceJavaClassJar = resourceApk.getResourceJavaClassJar();
+
+        // The resource class JAR should already have been generated.
+        Preconditions.checkArgument(
+            resourceJavaClassJar.equals(
+                ruleContext.getImplicitOutputArtifact(AndroidRuleClasses.ANDROID_RESOURCES_CLASS_JAR)));
+
+        // Add the compiled resource jar to the classpath of the main compilation.
+        attributesBuilder
+            .addDirectJars(NestedSetBuilder.create(Order.STABLE_ORDER, resourceJavaClassJar));
+        // Add the compiled resource jar to the classpath of consuming targets.
+        // We don't actually use the ijar. That is almost the same as the resource class jar
+        // except for <clinit>, but it takes time to build and waiting for that to build would
+        // just delay building the rest of the library.
+
+        // When not enforcing strict resource deps provide the resource jar to all consuming rules.
+        if (!dataContext.useStrictAndroidResourceDeps()) {
+          artifactsBuilder.addCompileTimeJarAsFullJar(resourceJavaClassJar);
+        }
+
+        // Add the compiled resource jar as a declared output of the rule.
+        filesBuilder.add(resourceJavaClassJar);
 
         // Combined resource constants needs to come even before our own classes that may contain
         // local resource constants.
         artifactsBuilder.addRuntimeJar(resourceApk.getResourceJavaClassJar());
         jarsProducedForRuntime.add(resourceApk.getResourceJavaClassJar());
       }
+    }
+
+    // When using strict resource deps add resource jars from direct dependencies to classpath.
+    if (dataContext.useStrictAndroidResourceDeps()) {
+      NestedSetBuilder<Artifact> resourceJarsFromDeps = collectDirectResourceJars(ruleContext);
+      attributesBuilder.addDirectJars(resourceJarsFromDeps.build());
     }
 
     // Databinding metadata that the databinding annotation processor reads.
@@ -563,6 +566,20 @@ public class AndroidCommon {
     }
     this.jarsProducedForRuntime = jarsProducedForRuntime.add(classJar).build();
     return attributes;
+  }
+
+  private NestedSetBuilder<Artifact> collectDirectResourceJars(RuleContext ruleContext) {
+    NestedSetBuilder<Artifact> builder = NestedSetBuilder.naiveLinkOrder();
+    Iterable<AndroidResourcesInfo> providers =
+        AndroidCommon.getTransitivePrerequisites(
+            ruleContext, TransitionMode.TARGET, AndroidResourcesInfo.PROVIDER);
+    for (AndroidResourcesInfo resourceJarProvider : providers) {
+      for (ValidatedAndroidResources directAndroidResource :
+          resourceJarProvider.getDirectAndroidResources().toList()) {
+        builder.add(directAndroidResource.getJavaClassJar());
+      }
+    }
+    return builder;
   }
 
   private JavaCompilationHelper initAttributes(

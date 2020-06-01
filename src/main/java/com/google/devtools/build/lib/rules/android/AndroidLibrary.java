@@ -200,6 +200,7 @@ public abstract class AndroidLibrary implements RuleConfiguredTargetFactory {
         androidCommon.init(
             javaSemantics,
             androidSemantics,
+            dataContext,
             resourceApk,
             /* addCoverageSupport= */ false,
             /* collectJavaCompilationArgs= */ true,

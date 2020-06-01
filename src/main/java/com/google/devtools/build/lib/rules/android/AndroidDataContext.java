@@ -52,9 +52,8 @@ public class AndroidDataContext implements AndroidDataContextApi {
   private static final String ANNOTATE_R_FIELDS_FROM_TRANSITIVE_DEPS =
       "annotate_r_fields_from_transitive_deps";
 
-  // If specified, omit resources from transitive dependencies when generating Android R classes.
-  private static final String OMIT_TRANSITIVE_RESOURCES_FROM_ANDROID_R_CLASSES =
-      "android_resources_strict_deps";
+  // Rules only have access to resources in their direct dependencies.
+  private static final String ANDROID_RESOURCES_STRICT_DEPS = "android_resources_strict_deps";
 
   // Feature which would enable AAPT2's resource name obfuscation optimization for android_binary
   // rules with resource shrinking and ProGuard/AppReduce enabled.
@@ -241,8 +240,8 @@ public class AndroidDataContext implements AndroidDataContextApi {
     return ruleContext.getFeatures().contains(ANNOTATE_R_FIELDS_FROM_TRANSITIVE_DEPS);
   }
 
-  boolean omitTransitiveResourcesFromAndroidRClasses() {
-    return ruleContext.getFeatures().contains(OMIT_TRANSITIVE_RESOURCES_FROM_ANDROID_R_CLASSES);
+  boolean useStrictAndroidResourceDeps() {
+    return ruleContext.getFeatures().contains(ANDROID_RESOURCES_STRICT_DEPS);
   }
 
   /** Returns true if the context dictates that resource shrinking should be performed. */
