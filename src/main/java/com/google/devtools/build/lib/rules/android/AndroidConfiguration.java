@@ -703,6 +703,18 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
     public boolean fixedResourceNeverlinking;
 
     @Option(
+        name = "use_android_resources_info_provider",
+        defaultValue = "false",
+        documentationCategory = OptionDocumentationCategory.UNDOCUMENTED,
+        effectTags = {OptionEffectTag.LOADING_AND_ANALYSIS},
+        help =
+            "If true, android_library targets will not make their resource jars available"
+                + " automatically to consuming targets and instead obtain resource jars from direct"
+                + " dependencies through AndroidResourcesInfo provider"
+                + "via AndroidResourcesInfoProvider")
+    public boolean useAndroidResourcesInfoProvider;
+
+    @Option(
         name = "android_migration_tag_check",
         defaultValue = "false",
         documentationCategory = OptionDocumentationCategory.UNDOCUMENTED,
@@ -1002,6 +1014,7 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
   private final boolean breakBuildOnParallelDex2OatFailure;
   private final boolean omitResourcesInfoProviderFromAndroidBinary;
   private final boolean fixedResourceNeverlinking;
+  private final boolean useAndroidResourcesInfoProvider;
   private final boolean checkForMigrationTag;
   private final boolean oneVersionEnforcementUseTransitiveJarsForBinaryUnderTest;
   private final boolean dataBindingV2;
@@ -1057,6 +1070,7 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
     this.omitResourcesInfoProviderFromAndroidBinary =
         options.omitResourcesInfoProviderFromAndroidBinary;
     this.fixedResourceNeverlinking = options.fixedResourceNeverlinking;
+    this.useAndroidResourcesInfoProvider = options.useAndroidResourcesInfoProvider;
     // use --incompatible_disable_native_android_rules, and also the old flag for backwards
     // compatibility
     this.checkForMigrationTag = options.checkForMigrationTag || options.disableNativeAndroidRules;
@@ -1277,6 +1291,10 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
   @Override
   public boolean fixedResourceNeverlinking() {
     return this.fixedResourceNeverlinking;
+  }
+
+  public boolean useAndroidResourcesInfoProvider() {
+    return this.useAndroidResourcesInfoProvider;
   }
 
   @Override

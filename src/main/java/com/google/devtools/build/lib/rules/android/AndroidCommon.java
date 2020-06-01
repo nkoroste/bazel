@@ -510,8 +510,8 @@ public class AndroidCommon {
         // except for <clinit>, but it takes time to build and waiting for that to build would
         // just delay building the rest of the library.
 
-        // When not enforcing strict resource deps provide the resource jar to all consuming rules.
-        if (!dataContext.useStrictAndroidResourceDeps()) {
+        // When not using AndroidResourceInfo provider, provide the resource jar to ALL consuming rules.
+        if (!dataContext.getAndroidConfig().useAndroidResourcesInfoProvider()) {
           artifactsBuilder.addCompileTimeJarAsFullJar(resourceJavaClassJar);
         }
 
@@ -524,9 +524,8 @@ public class AndroidCommon {
         jarsProducedForRuntime.add(resourceApk.getResourceJavaClassJar());
       }
     }
-
-    // When using strict resource deps add resource jars from direct dependencies to classpath.
-    if (dataContext.useStrictAndroidResourceDeps()) {
+    
+    if (dataContext.getAndroidConfig().useAndroidResourcesInfoProvider()) {
       NestedSetBuilder<Artifact> resourceJarsFromDeps = collectDirectResourceJars(ruleContext);
       attributesBuilder.addDirectJars(resourceJarsFromDeps.build());
     }
