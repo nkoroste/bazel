@@ -253,7 +253,8 @@ public abstract class AndroidLibrary implements RuleConfiguredTargetFactory {
             new AndroidProguardInfo(proguardLibrary.collectLocalProguardSpecs()))
         .addOutputGroup(OutputGroupInfo.HIDDEN_TOP_LEVEL, transitiveProguardConfigs)
         .addNativeDeclaredProvider(
-            AndroidLibraryResourceClassJarProvider.create(transitiveResourcesJars.build()));
+            AndroidLibraryResourceClassJarProvider.create(resourceApk.getResourceJavaClassJar(),
+                transitiveResourcesJars.build()));
 
     // If this isn't a neverlink target, we'll provide the artifacts in the AAR too.
     if (!JavaCommon.isNeverLink(ruleContext)) {

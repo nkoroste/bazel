@@ -33,16 +33,21 @@ public final class AndroidLibraryResourceClassJarProvider extends NativeInfo
 
   public static final Provider PROVIDER = new Provider();
 
+  private Artifact localResourceClassJar;
   private final NestedSet<Artifact> resourceClassJars;
 
-  private AndroidLibraryResourceClassJarProvider(NestedSet<Artifact> resourceClassJars) {
+  private AndroidLibraryResourceClassJarProvider(
+      Artifact localResourceClassJar,
+      NestedSet<Artifact> resourceClassJars) {
     super(PROVIDER);
+    this.localResourceClassJar = localResourceClassJar;
     this.resourceClassJars = resourceClassJars;
   }
 
   public static AndroidLibraryResourceClassJarProvider create(
+      Artifact localResourceClassJar,
       NestedSet<Artifact> resourceClassJars) {
-    return new AndroidLibraryResourceClassJarProvider(resourceClassJars);
+    return new AndroidLibraryResourceClassJarProvider(localResourceClassJar, resourceClassJars);
   }
 
   public static AndroidLibraryResourceClassJarProvider getProvider(
@@ -54,6 +59,11 @@ public final class AndroidLibraryResourceClassJarProvider extends NativeInfo
   @Override
   public Depset /*<Artifact>*/ getResourceClassJarsForStarlark() {
     return Depset.of(Artifact.TYPE, resourceClassJars);
+  }
+
+  @Override
+  public Artifact getLocalResourceClassJar() {
+    return localResourceClassJar;
   }
 
   public NestedSet<Artifact> getResourceClassJars() {
@@ -73,8 +83,9 @@ public final class AndroidLibraryResourceClassJarProvider extends NativeInfo
     }
 
     @Override
-    public AndroidLibraryResourceClassJarProvider create(Depset jars) throws EvalException {
+    public AndroidLibraryResourceClassJarProvider create(Artifact localResourceClassJar, Depset jars) throws EvalException {
       return new AndroidLibraryResourceClassJarProvider(
+          localResourceClassJar,
           NestedSetBuilder.<Artifact>stableOrder()
               .addTransitive(Depset.cast(jars, Artifact.class, "jars"))
               .build());

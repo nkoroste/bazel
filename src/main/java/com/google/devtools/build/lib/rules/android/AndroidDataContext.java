@@ -98,6 +98,31 @@ public class AndroidDataContext implements AndroidDataContextApi {
         executionInfo);
   }
 
+  /**
+   * Creates an <code>AndroidDataContext</code> that can be used from Skylark.
+   */
+  public static AndroidDataContext makeContextForSkylark(RuleContext ruleContext) throws InterruptedException {
+    AndroidConfiguration androidConfig =
+        ruleContext.getConfiguration().getFragment(AndroidConfiguration.class);
+
+    ImmutableMap<String, String> executionInfo = TargetUtils.getExecutionInfo(
+        ruleContext.getRule(), ruleContext.isAllowTagsPropagation());
+
+    return new AndroidDataContext(
+        ruleContext,
+        ruleContext.getExecutablePrerequisite("$android_resources_busybox", TransitionMode.HOST),
+        androidConfig.persistentBusyboxTools(),
+        ruleContext.getPrerequisite("android_sdk", TransitionMode.TARGET, AndroidSdkProvider.PROVIDER),
+        hasExemption(ruleContext, "allow_raw_access_to_resource_paths", false),
+        hasExemption(ruleContext, "allow_resource_name_obfuscation_opt_out", false),
+        !hasExemption(ruleContext, "allow_shrink_resources_attribute", true),
+        !hasExemption(ruleContext, "allow_proguard_apply_dictionary", true),
+        !hasExemption(ruleContext, "allow_proguard_apply_mapping", true),
+        !hasExemption(ruleContext, "allow_resource_conflicts", true),
+        androidConfig.useDataBindingV2(),
+        executionInfo);
+  }
+
   private static boolean hasExemption(
       RuleContext ruleContext, String exemptionName, boolean valueIfNoAllowlist) {
     return Allowlist.hasAllowlist(ruleContext, exemptionName)

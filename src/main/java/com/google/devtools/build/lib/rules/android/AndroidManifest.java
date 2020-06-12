@@ -144,7 +144,7 @@ public class AndroidManifest {
       @Nullable String pkg,
       boolean exportsManifest)
       throws InterruptedException {
-    if (pkg == null) {
+    if (pkg == null && dataContext.getAndroidConfig().inferManifestPackageFromJavaPackage()) {
       pkg =
           getDefaultPackage(
               dataContext.getLabel(), dataContext.getActionConstructionContext(), errorConsumer);

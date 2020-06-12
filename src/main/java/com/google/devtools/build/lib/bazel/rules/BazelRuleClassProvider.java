@@ -60,6 +60,8 @@ import com.google.devtools.build.lib.cmdline.LabelConstants;
 import com.google.devtools.build.lib.packages.RuleClass.Builder.ThirdPartyLicenseExistencePolicy;
 import com.google.devtools.build.lib.rules.android.AarImportBaseRule;
 import com.google.devtools.build.lib.rules.android.AndroidApplicationResourceInfo;
+import com.google.devtools.build.lib.rules.android.AndroidBinaryDataInfo;
+import com.google.devtools.build.lib.rules.android.AndroidAssetsInfo;
 import com.google.devtools.build.lib.rules.android.AndroidConfiguration;
 import com.google.devtools.build.lib.rules.android.AndroidDeviceBrokerInfo;
 import com.google.devtools.build.lib.rules.android.AndroidDeviceRule;
@@ -68,6 +70,7 @@ import com.google.devtools.build.lib.rules.android.AndroidHostServiceFixtureRule
 import com.google.devtools.build.lib.rules.android.AndroidInstrumentationInfo;
 import com.google.devtools.build.lib.rules.android.AndroidInstrumentationTestBaseRule;
 import com.google.devtools.build.lib.rules.android.AndroidLibraryBaseRule;
+import com.google.devtools.build.lib.rules.android.AndroidLibraryResourceClassJarProvider;
 import com.google.devtools.build.lib.rules.android.AndroidLocalTestBaseRule;
 import com.google.devtools.build.lib.rules.android.AndroidLocalTestConfiguration;
 import com.google.devtools.build.lib.rules.android.AndroidNativeLibsInfo;
@@ -76,7 +79,10 @@ import com.google.devtools.build.lib.rules.android.AndroidResourcesInfo;
 import com.google.devtools.build.lib.rules.android.AndroidRuleClasses;
 import com.google.devtools.build.lib.rules.android.AndroidRuleClasses.AndroidToolsDefaultsJarRule;
 import com.google.devtools.build.lib.rules.android.AndroidSdkBaseRule;
+import com.google.devtools.build.lib.rules.android.AndroidSdkProvider;
+import com.google.devtools.build.lib.rules.android.AndroidSemantics;
 import com.google.devtools.build.lib.rules.android.AndroidStarlarkCommon;
+import com.google.devtools.build.lib.rules.android.AndroidStarlarkData;
 import com.google.devtools.build.lib.rules.android.ApkInfo;
 import com.google.devtools.build.lib.rules.android.DexArchiveAspect;
 import com.google.devtools.build.lib.rules.config.ConfigRules;
@@ -344,12 +350,22 @@ public class BazelRuleClassProvider {
           AndroidBootstrap bootstrap =
               new AndroidBootstrap(
                   new AndroidStarlarkCommon(),
+                  new AndroidStarlarkData() {
+                    @Override
+                    public AndroidSemantics getAndroidSemantics() {
+                      return BazelAndroidSemantics.INSTANCE;
+                    }
+                  },
+                  AndroidSdkProvider.PROVIDER,
                   ApkInfo.PROVIDER,
                   AndroidInstrumentationInfo.PROVIDER,
                   AndroidDeviceBrokerInfo.PROVIDER,
                   AndroidResourcesInfo.PROVIDER,
+                  AndroidAssetsInfo.PROVIDER,
+                  AndroidLibraryResourceClassJarProvider.PROVIDER,
                   AndroidNativeLibsInfo.PROVIDER,
-                  AndroidApplicationResourceInfo.PROVIDER);
+                  AndroidApplicationResourceInfo.PROVIDER,
+                  AndroidBinaryDataInfo.PROVIDER);
           builder.addStarlarkBootstrap(bootstrap);
 
           try {

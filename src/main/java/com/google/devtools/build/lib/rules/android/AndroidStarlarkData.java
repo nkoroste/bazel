@@ -21,6 +21,7 @@ import com.google.devtools.build.lib.analysis.ConfiguredTarget;
 import com.google.devtools.build.lib.analysis.FileProvider;
 import com.google.devtools.build.lib.analysis.TransitiveInfoProvider;
 import com.google.devtools.build.lib.analysis.starlark.StarlarkErrorReporter;
+import com.google.devtools.build.lib.analysis.starlark.StarlarkRuleContext;
 import com.google.devtools.build.lib.cmdline.Label;
 import com.google.devtools.build.lib.collect.nestedset.NestedSetBuilder;
 import com.google.devtools.build.lib.collect.nestedset.Order;
@@ -67,9 +68,17 @@ public abstract class AndroidStarlarkData
         AndroidManifestInfo,
         AndroidLibraryAarInfo,
         AndroidBinaryDataInfo,
-        ValidatedAndroidResources> {
+        ValidatedAndroidResources,
+        StarlarkRuleContext> {
 
   public abstract AndroidSemantics getAndroidSemantics();
+
+  @Override
+  public AndroidDataContext makeContext(
+          StarlarkRuleContext ctx)
+      throws EvalException, InterruptedException {
+    return AndroidDataContext.makeContextForSkylark(ctx.getRuleContext());
+  }
 
   @Override
   public AndroidAssetsInfo assetsFromDeps(

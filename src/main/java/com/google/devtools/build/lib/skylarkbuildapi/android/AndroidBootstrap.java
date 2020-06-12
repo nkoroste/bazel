@@ -29,28 +29,40 @@ import com.google.devtools.build.lib.syntax.StarlarkSemantics.FlagIdentifier;
 public class AndroidBootstrap implements Bootstrap {
 
   private final AndroidStarlarkCommonApi<?, ?> androidCommon;
+  private final AndroidDataProcessingApi androidData;
+  private final AndroidSdkProviderApi.Provider androidSdkInfoProvider;
   private final ApkInfoApiProvider apkInfoProvider;
   private final AndroidInstrumentationInfoApiProvider<?> androidInstrumentationInfoProvider;
   private final AndroidDeviceBrokerInfoApiProvider androidDeviceBrokerInfoProvider;
   private final AndroidResourcesInfoApi.AndroidResourcesInfoApiProvider<?, ?, ?>
       androidResourcesInfoProvider;
+  private final AndroidAssetsInfoApi.Provider androidAssetsInfoApiProvider;
+  private final AndroidLibraryResourceClassJarProviderApi.Provider androidLibraryResourceClassJarProviderApi;
   private final AndroidNativeLibsInfoApiProvider androidNativeLibsInfoProvider;
   private final AndroidApplicationResourceInfoApiProvider<?>
       androidApplicationResourceInfoApiProvider;
 
   public AndroidBootstrap(
       AndroidStarlarkCommonApi<?, ?> androidCommon,
+      AndroidDataProcessingApi androidData,
+      AndroidSdkProviderApi.Provider androidSdkInfoProvider,
       ApkInfoApiProvider apkInfoProvider,
       AndroidInstrumentationInfoApiProvider<?> androidInstrumentationInfoProvider,
       AndroidDeviceBrokerInfoApiProvider androidDeviceBrokerInfoProvider,
       AndroidResourcesInfoApiProvider<?, ?, ?> androidResourcesInfoProvider,
+      AndroidAssetsInfoApi.Provider androidAssetsInfoApiProvider,
+      AndroidLibraryResourceClassJarProviderApi.Provider androidLibraryResourceClassJarProviderApi,
       AndroidNativeLibsInfoApiProvider androidNativeLibsInfoProvider,
       AndroidApplicationResourceInfoApiProvider<?> androidApplicationResourceInfoApiProvider) {
     this.androidCommon = androidCommon;
+    this.androidData = androidData;
+    this.androidSdkInfoProvider = androidSdkInfoProvider;
     this.apkInfoProvider = apkInfoProvider;
     this.androidInstrumentationInfoProvider = androidInstrumentationInfoProvider;
     this.androidDeviceBrokerInfoProvider = androidDeviceBrokerInfoProvider;
     this.androidResourcesInfoProvider = androidResourcesInfoProvider;
+    this.androidAssetsInfoApiProvider = androidAssetsInfoApiProvider;
+    this.androidLibraryResourceClassJarProviderApi = androidLibraryResourceClassJarProviderApi;
     this.androidNativeLibsInfoProvider = androidNativeLibsInfoProvider;
     this.androidApplicationResourceInfoApiProvider = androidApplicationResourceInfoApiProvider;
   }
@@ -63,7 +75,12 @@ public class AndroidBootstrap implements Bootstrap {
     // the Android Starlark migration. Let's not break them without an incompatible
     // change process.
     builder.put("android_common", androidCommon);
+    builder.put("android_data", androidData);
 
+    builder.put(
+        AndroidSdkProviderApi.NAME,
+        FlagGuardedValue.onlyWhenExperimentalFlagIsTrue(
+            FlagIdentifier.EXPERIMENTAL_GOOGLE_LEGACY_API, androidSdkInfoProvider));
     builder.put(
         ApkInfoApi.NAME,
         FlagGuardedValue.onlyWhenExperimentalFlagIsTrue(
@@ -80,6 +97,14 @@ public class AndroidBootstrap implements Bootstrap {
         AndroidResourcesInfoApi.NAME,
         FlagGuardedValue.onlyWhenExperimentalFlagIsTrue(
             FlagIdentifier.EXPERIMENTAL_GOOGLE_LEGACY_API, androidResourcesInfoProvider));
+    builder.put(
+        AndroidAssetsInfoApi.NAME,
+        FlagGuardedValue.onlyWhenExperimentalFlagIsTrue(
+            FlagIdentifier.EXPERIMENTAL_GOOGLE_LEGACY_API, androidAssetsInfoApiProvider));
+    builder.put(
+        AndroidLibraryResourceClassJarProviderApi.NAME,
+        FlagGuardedValue.onlyWhenExperimentalFlagIsTrue(
+            FlagIdentifier.EXPERIMENTAL_GOOGLE_LEGACY_API, androidLibraryResourceClassJarProviderApi));
     builder.put(
         AndroidNativeLibsInfoApi.NAME,
         FlagGuardedValue.onlyWhenExperimentalFlagIsTrue(

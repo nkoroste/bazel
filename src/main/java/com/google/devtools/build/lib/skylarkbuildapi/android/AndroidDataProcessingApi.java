@@ -15,6 +15,7 @@ package com.google.devtools.build.lib.skylarkbuildapi.android;
 
 import com.google.devtools.build.lib.skylarkbuildapi.FileApi;
 import com.google.devtools.build.lib.skylarkbuildapi.FileProviderApi;
+import com.google.devtools.build.lib.skylarkbuildapi.StarlarkRuleContextApi;
 import com.google.devtools.build.lib.skylarkbuildapi.core.ProviderApi;
 import com.google.devtools.build.lib.skylarkbuildapi.core.StructApi;
 import com.google.devtools.build.lib.skylarkbuildapi.core.TransitiveInfoCollectionApi;
@@ -47,8 +48,26 @@ public interface AndroidDataProcessingApi<
         AndroidManifestInfoT extends AndroidManifestInfoApi<?>,
         AndroidLibraryAarInfoT extends AndroidLibraryAarInfoApi<?>,
         AndroidBinaryDataInfoT extends AndroidBinaryDataInfoApi<?>,
-        ValidatedAndroidDataT extends ValidatedAndroidDataApi<?, ?>>
+        ValidatedAndroidDataT extends ValidatedAndroidDataApi<?, ?>,
+        StarlarkRuleContextT extends StarlarkRuleContextApi<?>>
     extends StarlarkValue {
+
+  @StarlarkMethod(
+      name = "make_context",
+      parameters = {
+          @Param(
+              name = "ctx",
+              positional = true,
+              named = false,
+              type = StarlarkRuleContextApi.class,
+              doc = "The rule context."),
+      },
+      doc =
+          "Creates an AndroidDataContext.",
+      documented = false)
+  AndroidDataContextT makeContext(
+      StarlarkRuleContextT ctx)
+      throws EvalException, InterruptedException;
 
   @StarlarkMethod(
       name = "assets_from_deps",

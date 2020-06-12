@@ -41,6 +41,9 @@ public interface AndroidLibraryResourceClassJarProviderApi<FileT extends FileApi
   @StarlarkMethod(name = "jars", structField = true, doc = "", documented = false)
   Depset /*<FileT>*/ getResourceClassJarsForStarlark();
 
+  @StarlarkMethod(name = "local_jar", allowReturnNones = true, structField = true, doc = "", documented = false)
+  FileT getLocalResourceClassJar();
+
   /** The provider implementing this can construct the AndroidLibraryResourceClassJarProvider. */
   @StarlarkBuiltin(
       name = "Provider",
@@ -56,6 +59,12 @@ public interface AndroidLibraryResourceClassJarProviderApi<FileT extends FileApi
         documented = false,
         parameters = {
           @Param(
+              name = "local_jar",
+              doc = "Local resource class jar.",
+              positional = true,
+              named = false,
+              type = FileApi.class),
+          @Param(
               name = "jars",
               doc = "Resource class jars.",
               positional = true,
@@ -67,6 +76,6 @@ public interface AndroidLibraryResourceClassJarProviderApi<FileT extends FileApi
     @StarlarkConstructor(
         objectType = AndroidLibraryResourceClassJarProviderApi.class,
         receiverNameForDoc = NAME)
-    AndroidLibraryResourceClassJarProviderApi<FileT> create(Depset jars) throws EvalException;
+    AndroidLibraryResourceClassJarProviderApi<FileT> create(FileT localJar, Depset jars) throws EvalException;
   }
 }

@@ -89,11 +89,16 @@ import com.google.devtools.build.skydoc.fakebuildapi.FakeStarlarkRuleFunctionsAp
 import com.google.devtools.build.skydoc.fakebuildapi.FakeStructApi;
 import com.google.devtools.build.skydoc.fakebuildapi.FakeStructApi.FakeStructProviderApi;
 import com.google.devtools.build.skydoc.fakebuildapi.android.FakeAndroidApplicationResourceInfo.FakeAndroidApplicationResourceInfoProvider;
+import com.google.devtools.build.skydoc.fakebuildapi.android.FakeAndroidBinaryData;
+import com.google.devtools.build.skydoc.fakebuildapi.android.FakeAndroidAssetsInfoProvider;
 import com.google.devtools.build.skydoc.fakebuildapi.android.FakeAndroidDeviceBrokerInfo.FakeAndroidDeviceBrokerInfoProvider;
 import com.google.devtools.build.skydoc.fakebuildapi.android.FakeAndroidInstrumentationInfo.FakeAndroidInstrumentationInfoProvider;
+import com.google.devtools.build.skydoc.fakebuildapi.android.FakeAndroidLibraryResourceClassJarProvider;
 import com.google.devtools.build.skydoc.fakebuildapi.android.FakeAndroidNativeLibsInfo.FakeAndroidNativeLibsInfoProvider;
 import com.google.devtools.build.skydoc.fakebuildapi.android.FakeAndroidResourcesInfo.FakeAndroidResourcesInfoProvider;
+import com.google.devtools.build.skydoc.fakebuildapi.android.FakeAndroidSdkProvider;
 import com.google.devtools.build.skydoc.fakebuildapi.android.FakeAndroidStarlarkCommon;
+import com.google.devtools.build.skydoc.fakebuildapi.android.FakeAndroidStarlarkData;
 import com.google.devtools.build.skydoc.fakebuildapi.android.FakeApkInfo.FakeApkInfoProvider;
 import com.google.devtools.build.skydoc.fakebuildapi.apple.FakeAppleCommon;
 import com.google.devtools.build.skydoc.fakebuildapi.config.FakeConfigGlobalLibrary;
@@ -557,12 +562,17 @@ public class SkydocMain {
     AndroidBootstrap androidBootstrap =
         new AndroidBootstrap(
             new FakeAndroidStarlarkCommon(),
+            new FakeAndroidStarlarkData(),
+            new FakeAndroidSdkProvider(),
             new FakeApkInfoProvider(),
             new FakeAndroidInstrumentationInfoProvider(),
             new FakeAndroidDeviceBrokerInfoProvider(),
             new FakeAndroidResourcesInfoProvider(),
+            new FakeAndroidAssetsInfoProvider(),
+            new FakeAndroidLibraryResourceClassJarProvider(),
             new FakeAndroidNativeLibsInfoProvider(),
-            new FakeAndroidApplicationResourceInfoProvider());
+            new FakeAndroidApplicationResourceInfoProvider(),
+            new FakeAndroidBinaryData());
     AppleBootstrap appleBootstrap = new AppleBootstrap(new FakeAppleCommon());
     ConfigBootstrap configBootstrap =
         new ConfigBootstrap(
