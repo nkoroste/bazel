@@ -928,6 +928,14 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
                 + "for instrumentation testing).")
     public boolean disableInstrumentationManifestMerging;
 
+    @Option(
+        name = "produce_android_resource_jars_for_runtime",
+        defaultValue = "true",
+        documentationCategory = OptionDocumentationCategory.UNDOCUMENTED,
+        effectTags = {OptionEffectTag.UNKNOWN},
+        help = "If disabled, prevents desugaring Android resource jars")
+    public boolean produceAndroidResourceJarsForRuntime;
+
     @Override
     public FragmentOptions getHost() {
       Options host = (Options) super.getHost();
@@ -1031,6 +1039,7 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
   private final boolean outputLibraryLinkedResources;
   private final Label legacyMainDexListGenerator;
   private final boolean disableInstrumentationManifestMerging;
+  private final boolean produceAndroidResourceJarsForRuntime;
 
   private AndroidConfiguration(Options options) throws InvalidConfigurationException {
     this.sdk = options.sdk;
@@ -1091,6 +1100,7 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
     this.outputLibraryLinkedResources = options.outputLibraryLinkedResources;
     this.outputLibraryMergedAssets = options.outputLibraryMergedAssets;
     this.legacyMainDexListGenerator = options.legacyMainDexListGenerator;
+    this.produceAndroidResourceJarsForRuntime = options.produceAndroidResourceJarsForRuntime;
     this.disableInstrumentationManifestMerging = options.disableInstrumentationManifestMerging;
 
     if (incrementalDexingShardsAfterProguard < 0) {
@@ -1375,5 +1385,9 @@ public class AndroidConfiguration extends Fragment implements AndroidConfigurati
   @Nullable
   public Label getLegacyMainDexListGenerator() {
     return legacyMainDexListGenerator;
+  }
+
+  public boolean produceAndroidResourceJarsForRuntime() {
+    return produceAndroidResourceJarsForRuntime;
   }
 }

@@ -25,6 +25,7 @@ import com.google.common.base.Functions;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.devtools.build.lib.actions.Artifact;
@@ -1574,7 +1575,16 @@ public abstract class AndroidBinary implements RuleConfiguredTargetFactory {
     }
     ImmutableSet<String> incrementalDexopts =
         DexArchiveAspect.incrementalDexopts(ruleContext, dexopts);
-    for (Artifact jar : common.getJarsProducedForRuntime().toList()) {
+
+    Builder<Artifact> artifactsToDex = ImmutableList.<Artifact>builder()
+        .addAll(common.getJarsProducedForRuntime().toList());
+    if (!AndroidCommon.getAndroidConfig(ruleContext).produceAndroidResourceJarsForRuntime()) {
+      // When Android resource jars are not produced for runtime they're excluded from desugaring
+      // however the jar still requires Dexing so include it here.
+      artifactsToDex.addAll(common.getRuntimeJars());
+    }
+
+    for (Artifact jar : artifactsToDex.build()) {
       // Create dex archives next to all Jars produced by AndroidCommon for this rule.  We need to
       // do this (instead of placing dex archives into the _dx subdirectory like DexArchiveAspect)
       // because for "legacy" ResourceApks, AndroidCommon produces Jars per resource dependency that

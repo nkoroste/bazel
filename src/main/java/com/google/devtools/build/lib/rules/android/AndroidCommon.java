@@ -521,7 +521,10 @@ public class AndroidCommon {
         // Combined resource constants needs to come even before our own classes that may contain
         // local resource constants.
         artifactsBuilder.addRuntimeJar(resourceApk.getResourceJavaClassJar());
-        jarsProducedForRuntime.add(resourceApk.getResourceJavaClassJar());
+
+        if (dataContext.getAndroidConfig().produceAndroidResourceJarsForRuntime()) {
+          jarsProducedForRuntime.add(resourceApk.getResourceJavaClassJar());
+        }
       }
     }
     
