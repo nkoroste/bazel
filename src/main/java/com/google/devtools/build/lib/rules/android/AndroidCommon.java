@@ -518,11 +518,10 @@ public class AndroidCommon {
         // Add the compiled resource jar as a declared output of the rule.
         filesBuilder.add(resourceJavaClassJar);
 
-        // Combined resource constants needs to come even before our own classes that may contain
-        // local resource constants.
-        artifactsBuilder.addRuntimeJar(resourceApk.getResourceJavaClassJar());
-
         if (dataContext.getAndroidConfig().produceAndroidResourceJarsForRuntime()) {
+          // Combined resource constants needs to come even before our own classes that may contain
+          // local resource constants.
+          artifactsBuilder.addRuntimeJar(resourceApk.getResourceJavaClassJar());
           jarsProducedForRuntime.add(resourceApk.getResourceJavaClassJar());
         }
       }

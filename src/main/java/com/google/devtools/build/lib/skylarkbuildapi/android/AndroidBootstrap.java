@@ -22,6 +22,7 @@ import com.google.devtools.build.lib.skylarkbuildapi.android.AndroidNativeLibsIn
 import com.google.devtools.build.lib.skylarkbuildapi.android.AndroidResourcesInfoApi.AndroidResourcesInfoApiProvider;
 import com.google.devtools.build.lib.skylarkbuildapi.android.ApkInfoApi.ApkInfoApiProvider;
 import com.google.devtools.build.lib.skylarkbuildapi.core.Bootstrap;
+import com.google.devtools.build.lib.skylarkbuildapi.core.ProviderApi;
 import com.google.devtools.build.lib.syntax.FlagGuardedValue;
 import com.google.devtools.build.lib.syntax.StarlarkSemantics.FlagIdentifier;
 
@@ -41,6 +42,7 @@ public class AndroidBootstrap implements Bootstrap {
   private final AndroidNativeLibsInfoApiProvider androidNativeLibsInfoProvider;
   private final AndroidApplicationResourceInfoApiProvider<?>
       androidApplicationResourceInfoApiProvider;
+  private final ProviderApi androidBinaryDataInfoApiProvider;
 
   public AndroidBootstrap(
       AndroidStarlarkCommonApi<?, ?> androidCommon,
@@ -53,7 +55,8 @@ public class AndroidBootstrap implements Bootstrap {
       AndroidAssetsInfoApi.Provider androidAssetsInfoApiProvider,
       AndroidLibraryResourceClassJarProviderApi.Provider androidLibraryResourceClassJarProviderApi,
       AndroidNativeLibsInfoApiProvider androidNativeLibsInfoProvider,
-      AndroidApplicationResourceInfoApiProvider<?> androidApplicationResourceInfoApiProvider) {
+      AndroidApplicationResourceInfoApiProvider<?> androidApplicationResourceInfoApiProvider,
+      ProviderApi androidBinaryDataInfoApiProvider) {
     this.androidCommon = androidCommon;
     this.androidData = androidData;
     this.androidSdkInfoProvider = androidSdkInfoProvider;
@@ -65,6 +68,7 @@ public class AndroidBootstrap implements Bootstrap {
     this.androidLibraryResourceClassJarProviderApi = androidLibraryResourceClassJarProviderApi;
     this.androidNativeLibsInfoProvider = androidNativeLibsInfoProvider;
     this.androidApplicationResourceInfoApiProvider = androidApplicationResourceInfoApiProvider;
+    this.androidBinaryDataInfoApiProvider = androidBinaryDataInfoApiProvider;
   }
 
   @Override
@@ -114,5 +118,10 @@ public class AndroidBootstrap implements Bootstrap {
         FlagGuardedValue.onlyWhenExperimentalFlagIsTrue(
             FlagIdentifier.EXPERIMENTAL_GOOGLE_LEGACY_API,
             androidApplicationResourceInfoApiProvider));
+    builder.put(
+        AndroidBinaryDataInfoApi.NAME,
+        FlagGuardedValue.onlyWhenExperimentalFlagIsTrue(
+            FlagIdentifier.EXPERIMENTAL_GOOGLE_LEGACY_API,
+            androidBinaryDataInfoApiProvider));
   }
 }

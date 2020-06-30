@@ -364,6 +364,7 @@ public abstract class AndroidStarlarkData
           AndroidBinaryDataInfo.PROVIDER,
           AndroidBinaryDataInfo.of(
               resourceApk.getArtifact(),
+              resourceApk.getResourceJavaClassJar(),
               resourceApk.getResourceProguardConfig(),
               resourceApk.toResourceInfo(ctx.getLabel()),
               resourceApk.toAssetsInfo(ctx.getLabel()),
@@ -513,6 +514,7 @@ public abstract class AndroidStarlarkData
 
       return AndroidBinaryDataInfo.of(
           resourceApk.getArtifact(),
+          resourceApk.getResourceJavaClassJar(),
           resourceApk.getResourceProguardConfig(),
           resourceApk.toResourceInfo(ctx.getLabel()),
           resourceApk.toAssetsInfo(ctx.getLabel()),

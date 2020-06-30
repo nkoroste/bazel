@@ -44,6 +44,14 @@ public interface AndroidBinaryDataInfoApi<FileT extends FileApi> extends StructA
   FileT getApk();
 
   @StarlarkMethod(
+      name = "final_r_class_jar",
+      structField = true,
+      doc = "Jar file containing the R classes for the application including all libraries with"
+          + "the final identifiers values assigned",
+      documented = false)
+  FileT getFinalRClassJar();
+
+  @StarlarkMethod(
       name = "resource_proguard_config",
       structField = true,
       doc = "Proguard config generated for the resources.",

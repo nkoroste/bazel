@@ -31,6 +31,7 @@ public class AndroidBinaryDataInfo extends NativeInfo
       new BuiltinProvider<AndroidBinaryDataInfo>(NAME, AndroidBinaryDataInfo.class) {};
 
   private final Artifact dataApk;
+  private final Artifact finalRClassJar;
   private final Artifact resourceProguardConfig;
 
   private final AndroidResourcesInfo resourcesInfo;
@@ -39,22 +40,25 @@ public class AndroidBinaryDataInfo extends NativeInfo
 
   public static AndroidBinaryDataInfo of(
       Artifact dataApk,
+      Artifact finalRClassJar,
       Artifact resourceProguardConfig,
       AndroidResourcesInfo resourcesInfo,
       AndroidAssetsInfo assetsInfo,
       AndroidManifestInfo manifestInfo) {
     return new AndroidBinaryDataInfo(
-        dataApk, resourceProguardConfig, resourcesInfo, assetsInfo, manifestInfo);
+        dataApk, finalRClassJar, resourceProguardConfig, resourcesInfo, assetsInfo, manifestInfo);
   }
 
   private AndroidBinaryDataInfo(
       Artifact dataApk,
+      Artifact finalRClassJar,
       Artifact resourceProguardConfig,
       AndroidResourcesInfo resourcesInfo,
       AndroidAssetsInfo assetsInfo,
       AndroidManifestInfo manifestInfo) {
     super(PROVIDER);
     this.dataApk = dataApk;
+    this.finalRClassJar = finalRClassJar;
     this.resourceProguardConfig = resourceProguardConfig;
     this.resourcesInfo = resourcesInfo;
     this.assetsInfo = assetsInfo;
@@ -64,6 +68,11 @@ public class AndroidBinaryDataInfo extends NativeInfo
   @Override
   public Artifact getApk() {
     return dataApk;
+  }
+
+  @Override
+  public Artifact getFinalRClassJar() {
+    return finalRClassJar;
   }
 
   @Override
@@ -85,6 +94,6 @@ public class AndroidBinaryDataInfo extends NativeInfo
 
   public AndroidBinaryDataInfo withShrunkApk(Artifact shrunkApk) {
     return new AndroidBinaryDataInfo(
-        shrunkApk, resourceProguardConfig, resourcesInfo, assetsInfo, manifestInfo);
+        shrunkApk, finalRClassJar, resourceProguardConfig, resourcesInfo, assetsInfo, manifestInfo);
   }
 }

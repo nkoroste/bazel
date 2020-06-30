@@ -171,6 +171,11 @@ public abstract class AndroidLocalTestBase implements RuleConfiguredTargetFactor
       return null;
     }
 
+    if (dataContext.getAndroidConfig().useAndroidResourcesInfoProvider()) {
+      NestedSetBuilder<Artifact> resourceJarsFromDeps = collectDirectResourceJars(ruleContext);
+      attributesBuilder.addDirectJars(resourceJarsFromDeps.build());
+    }
+
     JavaCompilationHelper helper =
         getJavaCompilationHelperWithDependencies(
             ruleContext, javaSemantics, javaCommon, attributesBuilder);
@@ -605,4 +610,18 @@ public abstract class AndroidLocalTestBase implements RuleConfiguredTargetFactor
   @Nullable
   protected abstract Artifact getAndroidAllJarsPropertiesFile(RuleContext ruleContext)
       throws RuleErrorException;
+
+  private NestedSetBuilder<Artifact> collectDirectResourceJars(RuleContext ruleContext) {
+    NestedSetBuilder<Artifact> builder = NestedSetBuilder.naiveLinkOrder();
+    Iterable<AndroidResourcesInfo> providers =
+        AndroidCommon.getTransitivePrerequisites(
+            ruleContext, TransitionMode.TARGET, AndroidResourcesInfo.PROVIDER);
+    for (AndroidResourcesInfo resourceJarProvider : providers) {
+      for (ValidatedAndroidResources directAndroidResource :
+          resourceJarProvider.getDirectAndroidResources().toList()) {
+        builder.add(directAndroidResource.getJavaClassJar());
+      }
+    }
+    return builder;
+  }
 }

@@ -291,7 +291,8 @@ public final class ResourceApk {
     if (manifestInfo.isPresent() && !isLibrary) {
       builder.addNativeDeclaredProvider(
           AndroidBinaryDataInfo.of(
-              resourceApk, resourceProguardConfig, resourceInfo, assetsInfo, manifestInfo.get()));
+              resourceApk, resourceJavaClassJar, resourceProguardConfig, resourceInfo, assetsInfo,
+              manifestInfo.get()));
     }
 
     if (includeStarlarkApiProvider) {
