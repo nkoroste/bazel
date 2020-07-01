@@ -431,7 +431,8 @@ public class AndroidCommon {
       boolean collectJavaCompilationArgs,
       boolean isBinary,
       NestedSet<Artifact> excludedRuntimeArtifacts,
-      boolean generateExtensionRegistry)
+      boolean generateExtensionRegistry,
+      boolean includeResourceClassJarAtRuntime)
       throws InterruptedException, RuleErrorException {
 
     classJar = ruleContext.getImplicitOutputArtifact(AndroidRuleClasses.ANDROID_LIBRARY_CLASS_JAR);
@@ -518,7 +519,7 @@ public class AndroidCommon {
         // Add the compiled resource jar as a declared output of the rule.
         filesBuilder.add(resourceJavaClassJar);
 
-        if (dataContext.getAndroidConfig().produceAndroidResourceJarsForRuntime()) {
+        if (includeResourceClassJarAtRuntime) {
           // Combined resource constants needs to come even before our own classes that may contain
           // local resource constants.
           artifactsBuilder.addRuntimeJar(resourceApk.getResourceJavaClassJar());
