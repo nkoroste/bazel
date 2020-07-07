@@ -107,7 +107,8 @@ public abstract class AndroidLocalTestBase implements RuleConfiguredTargetFactor
             androidSemantics,
             ruleContext,
             DataBinding.contextFrom(ruleContext, dataContext.getAndroidConfig()),
-            AndroidManifest.fromAttributes(ruleContext, dataContext),
+            AndroidManifest.from(dataContext, ruleContext, null, null,
+                /* exportsManifest = */ false),
             AndroidResources.from(ruleContext, "resource_files"),
             AndroidAssets.from(ruleContext),
             ResourceDependencies.fromRuleDeps(ruleContext, /* neverlink = */ false),
@@ -131,16 +132,6 @@ public abstract class AndroidLocalTestBase implements RuleConfiguredTargetFactor
     Template template =
         Template.forResource(AndroidLocalTestBase.class, "robolectric_properties_template.txt");
     List<Substitution> substitutions = new ArrayList<>();
-    substitutions.add(
-        Substitution.of(
-            "%android_merged_manifest%", resourceApk.getManifest().getRunfilesPathString()));
-    substitutions.add(
-        Substitution.of("%android_merged_resources%", "jar:file:" + resourcesLocation + "!/res"));
-    substitutions.add(
-        Substitution.of("%android_merged_assets%", "jar:file:" + resourcesLocation + "!/assets"));
-    substitutions.add(
-        Substitution.of(
-            "%android_custom_package%", resourceApk.getValidatedResources().getJavaPackage()));
 
     boolean generateBinaryResources =
         androidLocalTestConfiguration.useAndroidLocalTestBinaryResources();
@@ -148,6 +139,17 @@ public abstract class AndroidLocalTestBase implements RuleConfiguredTargetFactor
       substitutions.add(
           Substitution.of(
               "%android_resource_apk%", resourceApk.getArtifact().getRunfilesPathString()));
+    } else {
+      substitutions.add(
+          Substitution.of(
+              "%android_merged_manifest%", resourceApk.getManifest().getRunfilesPathString()));
+      substitutions.add(
+          Substitution.of("%android_merged_resources%", "jar:file:" + resourcesLocation + "!/res"));
+      substitutions.add(
+          Substitution.of("%android_merged_assets%", "jar:file:" + resourcesLocation + "!/assets"));
+      substitutions.add(
+          Substitution.of(
+              "%android_custom_package%", resourceApk.getValidatedResources().getJavaPackage()));
     }
 
     ruleContext.registerAction(

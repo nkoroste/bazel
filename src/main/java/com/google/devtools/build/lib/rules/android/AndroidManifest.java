@@ -63,7 +63,7 @@ public class AndroidManifest {
       RuleContext ruleContext, AndroidDataContext dataContext)
       throws InterruptedException, RuleErrorException {
     return fromAttributes(ruleContext, dataContext, null,
-        true /* inferManifestPackageFromJavaPackage */);
+        true);
   }
 
   /**
