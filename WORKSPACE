@@ -247,7 +247,7 @@ distdir_tar(
             "https://github.com/bazelbuild/rules_nodejs/releases/download/1.3.0/rules_nodejs-1.3.0.tar.gz",
         ],
         "android_tools_pkg-0.19.0rc1.tar.gz": [
-            "https://mirror.bazel.build/bazel_android_tools/android_tools_pkg-0.19.0rc1.tar.gz",
+            "https://storage.googleapis.com/snap-bazel-releases/bazel_android_tools/android_tools_pkg-0.19.0rc1.tar.gz",
         ],
         # bazelbuild/bazel-skylib
         "2d4c9528e0f453b5950eeaeac11d8d09f5a504d4.tar.gz": [
@@ -585,7 +585,7 @@ distdir_tar(
         "zulu11.37.17-ca-jdk11.0.6-macosx_x64.tar.gz": ["https://mirror.bazel.build/openjdk/azul-zulu11.37.17-ca-jdk11.0.6/zulu11.37.17-ca-jdk11.0.6-macosx_x64.tar.gz"],
         "zulu11.37.17-ca-jdk11.0.6-win_x64.zip": ["https://mirror.bazel.build/openjdk/azul-zulu11.37.17-ca-jdk11.0.6/zulu11.37.17-ca-jdk11.0.6-win_x64.zip"],
         "android_tools_pkg-0.19.0rc1.tar.gz": [
-            "https://mirror.bazel.build/bazel_android_tools/android_tools_pkg-0.19.0rc1.tar.gz",
+            "https://storage.googleapis.com/snap-bazel-releases/bazel_android_tools/android_tools_pkg-0.19.0rc1.tar.gz",
         ],
         # bazelbuild/bazel-skylib
         "2d4c9528e0f453b5950eeaeac11d8d09f5a504d4.tar.gz": [
@@ -707,7 +707,7 @@ http_archive(
     patch_cmds = EXPORT_WORKSPACE_IN_BUILD_FILE,
     patch_cmds_win = EXPORT_WORKSPACE_IN_BUILD_FILE_WIN,
     sha256 = "761e997a9055fe5e2b70aba8d64e78d4c2113feafaa8ac81909cb63e403f3087", # DO_NOT_REMOVE_THIS_ANDROID_TOOLS_UPDATE_MARKER
-    url = "https://mirror.bazel.build/bazel_android_tools/android_tools_pkg-0.19.0rc1.tar.gz",
+    url = "https://storage.googleapis.com/snap-bazel-releases/bazel_android_tools/android_tools_pkg-0.19.0rc1.tar.gz",
 )
 
 # This must be kept in sync with src/main/java/com/google/devtools/build/lib/bazel/rules/coverage.WORKSPACE.
