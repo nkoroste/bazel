@@ -1,6 +1,5 @@
 This is a fork of Bazel with Snapchat specific bug fixes and improvements. It's currently based on the following version:
-- Remote tag: [3.0.0](https://github.com/bazelbuild/bazel/tree/3.0.0)
-- Local branch: [upstream](https://github.sc-corp.net/Snapchat/bazel/tree/upstream)
+- Remote tag: [3.4.1](https://github.com/bazelbuild/bazel/tree/3.4.1)
 
 Making changes:
 - Put up a PR against the master branch.
