@@ -349,6 +349,7 @@ public final class BusyBoxActionBuilder {
           .addCommandLine(commandLine.build(), WORKERS_FORCED_PARAM_FILE_INFO);
 
       executionInfo.putAll(ExecutionRequirements.WORKER_MODE_ENABLED);
+      executionInfo.put(ExecutionRequirements.WORKER_KEY_MNEMONIC, "ResourceProcessorBusyBox");
     } else {
       spawnActionBuilder.addCommandLine(commandLine.build(), FORCED_PARAM_FILE_INFO);
     }
