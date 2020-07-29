@@ -328,9 +328,12 @@ public class FullyQualifiedName implements DataKey {
 
   @Override
   public boolean shouldDetectConflicts() {
-    // Ignore conflicts among pseudolocales.
-    return qualifiers.stream()
-        .noneMatch(q -> Ascii.equalsIgnoreCase(q, "en-rXA") || Ascii.equalsIgnoreCase(q, "ar-rXB"));
+    // https://jira.sc-corp.net/browse/APP-59390
+    // Comment out this section to avoid resource merger warning spam.
+//    // Ignore conflicts among pseudolocales.
+//    return qualifiers.stream()
+//        .noneMatch(q -> Ascii.equalsIgnoreCase(q, "en-rXA") || Ascii.equalsIgnoreCase(q, "ar-rXB"));
+    return false;
   }
 
   @Override
