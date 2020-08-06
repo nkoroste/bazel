@@ -98,6 +98,7 @@ import com.google.devtools.build.lib.analysis.starlark.StarlarkTransition;
 import com.google.devtools.build.lib.analysis.starlark.StarlarkTransition.TransitionException;
 import com.google.devtools.build.lib.buildtool.BuildRequestOptions;
 import com.google.devtools.build.lib.cmdline.Label;
+import com.google.devtools.build.lib.cmdline.LabelConstants;
 import com.google.devtools.build.lib.cmdline.PackageIdentifier;
 import com.google.devtools.build.lib.cmdline.RepositoryName;
 import com.google.devtools.build.lib.cmdline.TargetParsingException;
@@ -1216,7 +1217,7 @@ public abstract class SkyframeExecutor implements WalkableGraphFactory, Configur
       return packageRoot;
     } else {
       Path actualRootPath = packageRoot.asPath();
-      int segmentCount = repository.getSourceRoot().segmentCount();
+      int segmentCount = repository.getSourceRootNew().segmentCount();
       for (int i = 0; i < segmentCount; i++) {
         actualRootPath = actualRootPath.getParentDirectory();
       }
@@ -1436,7 +1437,12 @@ public abstract class SkyframeExecutor implements WalkableGraphFactory, Configur
     // output_base/external, but for some reason it isn't.
     return Stream.concat(
             pkgLocator.getPathEntries().stream(),
-            Stream.of(Root.absoluteRoot(fileSystem), Root.fromPath(directories.getOutputBase())))
+            Stream.of(
+                Root.absoluteRoot(fileSystem),
+                Root.fromPath(
+                    directories
+                        .getOutputBase()
+                        .getRelative(LabelConstants.EXTERNAL_REPOSITORY_LOCATION))))
         .distinct()
         .collect(
             ImmutableMap.toImmutableMap(

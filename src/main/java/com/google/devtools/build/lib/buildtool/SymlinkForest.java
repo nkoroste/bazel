@@ -384,7 +384,7 @@ public class SymlinkForest {
         plantSymlinkForExternalRepo(
             plantedSymlinks,
             repository,
-            entry.getValue().getRelative(repository.getSourceRoot()),
+            entry.getValue().getRelative(repository.getSourceRootNew()),
             externalRepoLinks);
       }
     }

@@ -254,6 +254,12 @@ public final class RepositoryName implements Serializable {
         : LabelConstants.EXTERNAL_REPOSITORY_LOCATION.getRelative(strippedName());
   }
 
+  public PathFragment getSourceRootNew() {
+    return isDefault() || isMain()
+        ? PathFragment.EMPTY_FRAGMENT
+        : PathFragment.create(strippedName());
+  }
+
   /**
    * Returns the relative path to the repository's source for derived artifacts. This behavior is
    * currently the same for source artifacts, but we create a new method name to keep call sites
