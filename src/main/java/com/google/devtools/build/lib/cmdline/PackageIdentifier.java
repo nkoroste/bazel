@@ -177,6 +177,10 @@ public final class PackageIdentifier implements Comparable<PackageIdentifier>, S
     return repository.getSourceRoot().getRelative(pkgName);
   }
 
+  public PathFragment getSourceRootNew() {
+    return repository.getSourceRootNew().getRelative(pkgName);
+  }
+
   public PathFragment getExecPath(boolean siblingRepositoryLayout) {
     return repository.getExecPath(siblingRepositoryLayout).getRelative(pkgName);
   }

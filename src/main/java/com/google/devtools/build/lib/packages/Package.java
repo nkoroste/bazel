@@ -401,9 +401,11 @@ public class Package {
           packageIdentifier.equals(LabelConstants.EXTERNAL_PACKAGE_IDENTIFIER));
       this.sourceRoot = Optional.empty();
     } else {
-      Root sourceRoot = getSourceRoot(filename, packageIdentifier.getSourceRoot());
+      Root sourceRoot = getSourceRoot(filename, packageIdentifier.getSourceRootNew());
       if (sourceRoot.asPath() == null
-          || !sourceRoot.getRelative(packageIdentifier.getSourceRoot()).equals(packageDirectory)) {
+          || !sourceRoot
+              .getRelative(packageIdentifier.getSourceRootNew())
+              .equals(packageDirectory)) {
         throw new IllegalArgumentException(
             "Invalid BUILD file name for package '"
                 + packageIdentifier
@@ -414,7 +416,7 @@ public class Package {
                 + " with packageDirectory "
                 + packageDirectory
                 + " and package identifier source root "
-                + packageIdentifier.getSourceRoot()
+                + packageIdentifier.getSourceRootNew()
                 + ")");
       }
       this.sourceRoot = Optional.of(sourceRoot);

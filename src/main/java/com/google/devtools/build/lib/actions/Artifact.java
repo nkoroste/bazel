@@ -474,7 +474,7 @@ public abstract class Artifact
   }
 
   public final Path getPath() {
-    return root.getRoot().getRelative(getRootRelativePath());
+    return root.getRoot().getRelative(getNewRootRelativePath());
   }
 
   public boolean hasParent() {
@@ -573,9 +573,27 @@ public abstract class Artifact
   /**
    * Returns the relative path to this artifact relative to its root. (Useful when deriving output
    * filenames from input files, etc.)
+   *
+   * @deprecated Use getNewRootRelativePath() instead. This returns invalid root relative paths for
+   *     external source artifacts.
    */
+  @Deprecated
   public abstract PathFragment getRootRelativePath();
 
+  /**
+   * Returns the relative path to this artifact relative to its root. (Useful when deriving output
+   * filenames from input files, etc.)
+   */
+  public PathFragment getNewRootRelativePath() {
+    return root.isSourceRoot()
+            && !root.getRoot().isAbsolute()
+            && root.getRoot()
+                .asPath()
+                .getBaseName()
+                .equals(LabelConstants.EXTERNAL_PATH_PREFIX.toString())
+        ? getExecPath().subFragment(1)
+        : getRootRelativePath();
+  }
   /** Returns this.getExecPath().getPathString(). */
   @Override
   public final String getExecPathString() {
