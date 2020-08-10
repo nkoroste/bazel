@@ -75,5 +75,9 @@ create_system_images_filegroups(
 %system_image_dirs%    ],
 )
 
+# Resolved: added these exports due to visibility bug:
+# https://github.com/bazelbuild/bazel/issues/10077
 exports_files([
+    'tools/bin/avdmanager',
+    'tools/emulator',
 %exported_files%] + glob(["system-images/**"], allow_empty = True))
