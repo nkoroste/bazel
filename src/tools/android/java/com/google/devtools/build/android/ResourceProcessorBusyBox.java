@@ -185,8 +185,9 @@ public class ResourceProcessorBusyBox {
     PrintStream realStdErr = System.err;
     try {
       // Redirect all stdout and stderr output for logging.
-      System.setOut(ps);
-      System.setErr(ps);
+// Avoid changing std stream due to https://jira.sc-corp.net/browse/APP-60122
+//      System.setOut(ps);
+//      System.setErr(ps);
 
       while (true) {
         try {
